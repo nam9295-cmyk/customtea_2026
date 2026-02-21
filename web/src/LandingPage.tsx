@@ -1,6 +1,7 @@
-import React from 'react';
-import { navLinks, heroReport } from './data/landingData';
+import React, { useState, useEffect } from 'react';
+import { navLinks } from './data/landingData';
 import { teaDetails, TeaDetail } from './data/teaDetails';
+import TeaPreviewCard from './components/TeaPreviewCard';
 
 interface LandingPageProps {
   onStartSurvey: () => void;
@@ -8,6 +9,14 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey, onSelectTea }) => {
+  const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentPreviewIndex(prev => (prev + 1) % teaDetails.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent/30 selection:text-white animate-fade-in relative">
@@ -75,49 +84,44 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey, onSelectTea })
               </div>
             </div>
 
-            {/* Hero Report Panel Graphic */}
+            {/* Hero Preview Viewer */}
             <div className="w-full flex justify-center lg:justify-end">
-              <div className="w-full max-w-[560px] bg-white rounded-sm border border-brand-text/5 shadow-2xl p-8 md:p-[60px] flex flex-col justify-between relative overflow-hidden group">
-                {/* Deco elements */}
-                <div className="absolute top-0 right-0 w-40 h-40 bg-brand-accent/5 rounded-bl-[100px] -z-0 transition-transform duration-700 group-hover:scale-110"></div>
+              {/* Dot indicators & Viewer Container */}
+              <div className="w-full max-w-[480px] lg:max-w-[540px] flex flex-col gap-6 relative">
 
-                <div className="w-full flex justify-between items-center border-b border-brand-text/5 pb-6 z-10 mb-10">
-                  <span className="text-[11px] font-sans font-bold tracking-[0.15em] text-brand-text/60">CURATION REPORT</span>
-                  <span className="text-[11px] font-mono text-brand-text/40">{heroReport.id}</span>
-                </div>
+                {/* Decorative glowing backdrop that pulses slightly */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-brand-accent/20 blur-[60px] rounded-full animate-pulse z-0 pointer-events-none"></div>
 
-                <div className="flex flex-col gap-10 z-10">
-                  <div className="flex flex-col gap-2">
-                    <h3 className="font-serif text-[42px] font-medium leading-[1.1] text-brand-text whitespace-pre-line tracking-tight">
-                      {heroReport.title}
-                    </h3>
-                    <div className="flex gap-2 mt-4">
-                      {heroReport.tags.map(tag => (
-                        <span key={tag} className="text-[13px] font-medium px-3 py-1 bg-brand-accent/10 text-brand-accent rounded-full">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-6 pt-4">
-                    {heroReport.ratios.map((ratio) => (
-                      <div key={ratio.name} className="flex flex-col gap-2">
-                        <div className="flex justify-between items-end mb-1">
-                          <span className="text-[15px] font-medium text-brand-text/80">{ratio.name}</span>
-                          <span className="text-[14px] font-mono text-brand-accent font-semibold">{ratio.displayVal}</span>
-                        </div>
-                        <div className="w-full h-1 bg-brand-text/5 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full animate-grow-width`}
-                            style={{
-                              width: `${ratio.val}%`,
-                              animationDelay: ratio.delay,
-                              backgroundColor: ratio.name === 'Hibiscus' ? '#edc5c4' : (ratio.name === 'Lemongrass' ? '#e2d5c5' : '#c5d1cf')
-                            }}
-                          ></div>
-                        </div>
+                <div className="relative w-full z-10">
+                  {teaDetails.map((tea, idx) => {
+                    const isActive = idx === currentPreviewIndex;
+                    return (
+                      <div
+                        key={tea.id}
+                        className={`absolute inset-0 transition-all duration-[2000ms] ease-[cubic-bezier(0.22,1,0.36,1)] origin-bottom ${isActive
+                          ? 'opacity-100 z-10 scale-100 translate-y-0 blur-none'
+                          : 'opacity-0 z-0 scale-[0.92] translate-y-8 blur-[4px]'
+                          }`}
+                        style={{ position: idx === 0 ? 'relative' : 'absolute' }}
+                      >
+                        <TeaPreviewCard tea={tea} compact={true} />
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
+                </div>
+                {/* Dot indicators */}
+                <div className="flex justify-center gap-2.5 pt-2 z-10">
+                  {teaDetails.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentPreviewIndex(idx)}
+                      className={`h-1.5 rounded-full transition-all duration-700 ease-out ${idx === currentPreviewIndex
+                        ? 'bg-brand-accent w-8'
+                        : 'bg-brand-text/15 hover:bg-brand-text/30 w-1.5'
+                        }`}
+                      aria-label={`View ${teaDetails[idx].name}`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
