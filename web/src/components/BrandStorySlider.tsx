@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar, XAxis, YAxis, Cell } from 'recharts';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -95,11 +96,21 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
     const [values, setValues] = useState({ slot1: 30, slot2: 20, slot3: 50 });
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [canCloseByBackdrop, setCanCloseByBackdrop] = useState(false);
 
     // Trigger the entrance animation on mount
     useEffect(() => {
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
         const t = requestAnimationFrame(() => setVisible(true));
-        return () => cancelAnimationFrame(t);
+        const interactiveTimer = window.setTimeout(() => {
+            setCanCloseByBackdrop(true);
+        }, 0);
+        return () => {
+            cancelAnimationFrame(t);
+            window.clearTimeout(interactiveTimer);
+            document.body.style.overflow = originalOverflow;
+        };
     }, []);
 
     const handleClose = () => {
@@ -160,7 +171,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
             let weightedSum = 0;
             if (total > 0) {
                 keys.forEach((key, i) => {
-                    // @ts-ignore dynamic indexing
+                    // @ts-expect-error dynamic indexing
                     weightedSum += (ing[key]?.stats[statKey] || 0) * vals[i];
                 });
             }
@@ -178,7 +189,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
             let weightedSum = 0;
             if (total > 0) {
                 keys.forEach((key, i) => {
-                    // @ts-ignore dynamic indexing
+                    // @ts-expect-error dynamic indexing
                     weightedSum += (ing[key]?.flavor[flavorKey] || 0) * vals[i];
                 });
             }
@@ -186,21 +197,23 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
         });
     }, [currentTea, ingredientKeys, values]);
 
-    return (
+    return createPortal(
         /* ── Layer 1: Full-screen overlay backdrop ── */
         <div
-            className={`fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 transition-all duration-300 ease-out ${visible ? 'bg-black/40 backdrop-blur-md opacity-100' : 'bg-black/0 backdrop-blur-none opacity-0'
+            className={`fixed inset-0 z-[9998] h-[100dvh] flex items-center justify-center p-4 md:p-8 transition-all duration-300 ease-out ${visible ? 'bg-black/40 backdrop-blur-md opacity-100' : 'bg-black/0 backdrop-blur-none opacity-0'
                 }`}
-            onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+            onMouseDown={(e) => {
+                if (!canCloseByBackdrop) return;
+                if (e.target === e.currentTarget) handleClose();
+            }}
         >
             {/* ── Layer 2: White modal container box ── */}
             <div
-                className={`relative bg-[#FDFCFB] w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 ease-out ${visible ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'
+                className={`relative bg-[#FDFCFB] w-full max-w-5xl max-h-[90dvh] rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 ease-out ${visible ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'
                     }`}
-                style={{ maxHeight: '90vh' }}
             >
                 {/* Scrollable inner area */}
-                <div className="overflow-y-auto overflow-x-hidden" style={{ maxHeight: '90vh' }}>
+                <div className="max-h-[90dvh] overflow-y-auto overflow-x-hidden">
 
                     {/* ── Close Button ── */}
                     <button
@@ -377,6 +390,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

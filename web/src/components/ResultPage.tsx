@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { Shield, Leaf, Wind, Activity } from 'lucide-react';
 import { BlendResult } from '../engine/calculator';
+import { teaDetails } from '../data/teaDetails';
 
 interface ResultPageProps {
     onRestart: () => void;
@@ -29,6 +30,8 @@ const ResultPage: React.FC<ResultPageProps> = ({ onRestart, blendResult }) => {
     }, []);
 
     const topTea = blendResult[0];
+    const topTeaDetail = teaDetails.find((tea) => tea.id === topTea.id);
+    const recommendedImage = topTeaDetail?.imageHover ?? '/images/british.webp';
 
     return (
         <div className="fixed inset-0 z-[200] w-full min-h-screen bg-[#FDFCFB] overflow-y-auto py-20 px-6 md:px-20 animate-fade-in">
@@ -51,8 +54,10 @@ const ResultPage: React.FC<ResultPageProps> = ({ onRestart, blendResult }) => {
                     <div className="flex flex-col space-y-6 md:space-y-8">
                         <div className="w-full aspect-square bg-[#faf7f5] rounded-[24px] md:rounded-[32px] overflow-hidden relative shadow-sm">
                             <img
-                                src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80"
+                                src={recommendedImage}
                                 alt="Recommended Tea Blend"
+                                loading="eager"
+                                decoding="async"
                                 className="w-full h-full object-cover mix-blend-multiply opacity-90 transition-transform duration-700 hover:scale-105"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent mix-blend-overlay"></div>

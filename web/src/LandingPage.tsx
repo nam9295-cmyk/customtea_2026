@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Leaf } from 'lucide-react';
 import { navLinks } from './data/landingData';
 import { teaDetails } from './data/teaDetails';
 import TeaDetailModal from './components/TeaDetailModal';
 import TeaPreviewCard from './components/TeaPreviewCard';
-import { BrandStorySlider } from './components/BrandStorySlider';
+
+const BrandStorySlider = lazy(() =>
+  import('./components/BrandStorySlider').then((module) => ({ default: module.BrandStorySlider })),
+);
 
 interface LandingPageProps {
   onStartSurvey: () => void;
@@ -14,12 +17,43 @@ export function LandingPage({ onStartSurvey }: LandingPageProps) {
   const [selectedTeaId, setSelectedTeaId] = useState<string | null>(null);
   const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
   const [showBrandStory, setShowBrandStory] = useState(false);
+  const activeTea = teaDetails[currentPreviewIndex];
+  const selectedTea = useMemo(
+    () => teaDetails.find((tea) => tea.id === selectedTeaId) ?? null,
+    [selectedTeaId],
+  );
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentPreviewIndex(prev => (prev + 1) % teaDetails.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    let timerId: number | null = null;
+
+    const startAutoRotate = () => {
+      if (timerId !== null) return;
+      timerId = window.setInterval(() => {
+        setCurrentPreviewIndex((prev) => (prev + 1) % teaDetails.length);
+      }, 5000);
+    };
+
+    const stopAutoRotate = () => {
+      if (timerId === null) return;
+      window.clearInterval(timerId);
+      timerId = null;
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        stopAutoRotate();
+      } else {
+        startAutoRotate();
+      }
+    };
+
+    startAutoRotate();
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      stopAutoRotate();
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   return (
@@ -100,21 +134,12 @@ export function LandingPage({ onStartSurvey }: LandingPageProps) {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-brand-accent/20 blur-[60px] rounded-full animate-pulse z-0 pointer-events-none"></div>
 
                 <div className="relative w-full z-10">
-                  {teaDetails.map((tea, idx) => {
-                    const isActive = idx === currentPreviewIndex;
-                    return (
-                      <div
-                        key={tea.id}
-                        className={`absolute inset-0 transition-all duration-[2000ms] ease-[cubic-bezier(0.22,1,0.36,1)] origin-bottom ${isActive
-                          ? 'opacity-100 z-10 scale-100 translate-y-0 blur-none'
-                          : 'opacity-0 z-0 scale-[0.92] translate-y-8 blur-[4px]'
-                          }`}
-                        style={{ position: idx === 0 ? 'relative' : 'absolute' }}
-                      >
-                        <TeaPreviewCard tea={tea} compact={true} />
-                      </div>
-                    );
-                  })}
+                  <div
+                    key={activeTea.id}
+                    className="relative animate-fade-in transition-all duration-700 ease-out"
+                  >
+                    <TeaPreviewCard tea={activeTea} compact={true} showChart={false} />
+                  </div>
                 </div>
                 {/* Dot indicators */}
                 <div className="flex justify-center gap-2.5 pt-2 z-10">
@@ -152,7 +177,10 @@ export function LandingPage({ onStartSurvey }: LandingPageProps) {
               {teaDetails.map((tea, index) => (
                 <div
                   key={tea.id}
-                  onClick={() => setSelectedTeaId(tea.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedTeaId(tea.id);
+                  }}
                   className="group cursor-pointer flex flex-col space-y-4 animate-fade-in"
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
@@ -160,11 +188,15 @@ export function LandingPage({ onStartSurvey }: LandingPageProps) {
                     <img
                       src={tea.imageDefault}
                       alt={`${tea.name} cup`}
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out group-hover:opacity-0"
                     />
                     <img
                       src={tea.imageHover}
                       alt={`${tea.name} package`}
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-0 group-hover:opacity-100"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent mix-blend-overlay pointer-events-none z-10"></div>
@@ -214,15 +246,17 @@ export function LandingPage({ onStartSurvey }: LandingPageProps) {
       </footer>
 
       {/* Modals */}
-      {selectedTeaId && (
+      {selectedTea && (
         <TeaDetailModal
-          tea={teaDetails.find(t => t.id === selectedTeaId)!}
+          tea={selectedTea}
           onClose={() => setSelectedTeaId(null)}
         />
       )}
 
       {showBrandStory && (
-        <BrandStorySlider onClose={() => setShowBrandStory(false)} />
+        <Suspense fallback={null}>
+          <BrandStorySlider onClose={() => setShowBrandStory(false)} />
+        </Suspense>
       )}
     </div>
   );

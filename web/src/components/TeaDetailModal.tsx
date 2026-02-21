@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import TeaPreviewCard from './TeaPreviewCard';
 import { TeaDetail } from '../data/teaDetails';
 
@@ -8,27 +9,37 @@ interface TeaDetailModalProps {
 }
 
 const TeaDetailModal: React.FC<TeaDetailModalProps> = ({ tea, onClose }) => {
+    const [canCloseByBackdrop, setCanCloseByBackdrop] = useState(false);
+
     useEffect(() => {
+        const originalOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
+        const interactiveTimer = window.setTimeout(() => {
+            setCanCloseByBackdrop(true);
+        }, 0);
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose();
         };
         window.addEventListener('keydown', handleEscape);
         return () => {
-            document.body.style.overflow = '';
+            window.clearTimeout(interactiveTimer);
+            document.body.style.overflow = originalOverflow;
             window.removeEventListener('keydown', handleEscape);
         };
     }, [onClose]);
 
-    return (
-        // Outer backdrop scrolls so modal top is never clipped
+    return createPortal(
+        // Centered modal with internal scrolling for smaller viewports
         <div
-            className="fixed inset-0 z-[9999] bg-[#FDFCFB]/70 backdrop-blur-md overflow-y-auto animate-fade-in"
-            onClick={onClose}
+            className="fixed inset-0 z-[9999] bg-[#FDFCFB]/70 backdrop-blur-md animate-fade-in"
+            onMouseDown={(e) => {
+                if (!canCloseByBackdrop) return;
+                if (e.target === e.currentTarget) onClose();
+            }}
         >
-            <div className="flex items-start justify-center min-h-screen py-10 px-4">
+            <div className="min-h-screen flex items-center justify-center p-4 md:p-6">
                 <div
-                    className="relative w-full max-w-[720px] animate-slide-up"
+                    className="relative w-full max-w-[720px] max-h-[90vh] overflow-y-auto animate-slide-up"
                     onClick={e => e.stopPropagation()}
                 >
                     {/* Close Button */}
@@ -40,10 +51,11 @@ const TeaDetailModal: React.FC<TeaDetailModalProps> = ({ tea, onClose }) => {
                         &times;
                     </button>
 
-                    <TeaPreviewCard tea={tea} compact={false} />
+                    <TeaPreviewCard tea={tea} compact={false} showChart={true} />
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

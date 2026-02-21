@@ -1,17 +1,20 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { LandingPage } from './LandingPage';
-import QuestionForm, { AnswerValue } from './components/QuestionForm';
-import ResultPage from './components/ResultPage';
-import TeaDetailModal from './components/TeaDetailModal';
+import type { AnswerValue } from './components/QuestionForm';
 import { calculateBlendRatio, BlendResult } from './engine/calculator';
-import { TeaDetail } from './data/teaDetails';
+
+const QuestionForm = lazy(() => import('./components/QuestionForm'));
+const ResultPage = lazy(() => import('./components/ResultPage'));
 
 type ViewState = 'landing' | 'quiz' | 'result';
+
+function ViewFallback() {
+  return <div className="fixed inset-0 z-[90] bg-[#FDFCFB]/80 backdrop-blur-sm" />;
+}
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewState>('landing');
   const [blendResult, setBlendResult] = useState<BlendResult[] | null>(null);
-  const [selectedTea, setSelectedTea] = useState<TeaDetail | null>(null);
 
   const handleStartSurvey = () => {
     setCurrentView('quiz');
@@ -31,24 +34,25 @@ function App() {
 
   return (
     <>
-      <LandingPage
-        onStartSurvey={handleStartSurvey}
-      />
-
-      {currentView === 'quiz' && (
-        <QuestionForm
-          onClose={handleCloseSurvey}
-          onComplete={handleSurveyComplete}
+      {currentView === 'landing' && (
+        <LandingPage
+          onStartSurvey={handleStartSurvey}
         />
       )}
 
-      {currentView === 'result' && blendResult && (
-        <ResultPage blendResult={blendResult} onRestart={handleCloseSurvey} />
+      {currentView === 'quiz' && (
+        <Suspense fallback={<ViewFallback />}>
+          <QuestionForm
+            onClose={handleCloseSurvey}
+            onComplete={handleSurveyComplete}
+          />
+        </Suspense>
       )}
 
-      {/* Modal rendered at root level — no z-index conflict */}
-      {selectedTea && (
-        <TeaDetailModal tea={selectedTea} onClose={() => setSelectedTea(null)} />
+      {currentView === 'result' && blendResult && (
+        <Suspense fallback={<ViewFallback />}>
+          <ResultPage blendResult={blendResult} onRestart={handleCloseSurvey} />
+        </Suspense>
       )}
     </>
   );
