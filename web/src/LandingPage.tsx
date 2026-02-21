@@ -1,13 +1,16 @@
 import React from 'react';
 import { navLinks, heroReport } from './data/landingData';
+import { teaDetails, TeaDetail } from './data/teaDetails';
 
 interface LandingPageProps {
   onStartSurvey: () => void;
+  onSelectTea: (tea: TeaDetail) => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey, onSelectTea }) => {
+
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent/30 selection:text-white animate-fade-in">
+    <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent/30 selection:text-white animate-fade-in relative">
 
       {/* Navigation Bar */}
       <nav className="w-full h-[90px] border-b border-brand-text/5 px-6 md:px-[120px] flex items-center justify-between bg-brand-bg/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
@@ -122,6 +125,60 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey }) => {
           </div>
         </section>
 
+        {/* Signature Base Section */}
+        <section className="w-full px-6 md:px-[120px] py-24 bg-brand-text/[0.02]">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="text-center mb-16 space-y-4 animate-fade-in">
+              <span className="font-sans text-xs tracking-[0.2em] text-brand-text/40 font-bold uppercase">
+                Discover The Roots
+              </span>
+              <h2 className="font-serif text-[32px] md:text-[40px] text-brand-text font-medium">
+                Our Signature Base
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {teaDetails.map((tea, index) => (
+                <div
+                  key={tea.id}
+                  onClick={() => onSelectTea(tea)}
+                  className="group cursor-pointer flex flex-col space-y-4 animate-fade-in"
+                  style={{ animationDelay: `${index * 0.15}s` }}
+                >
+                  <div className="group relative aspect-square overflow-hidden bg-gray-50 w-full rounded-sm shadow-sm transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-xl border border-brand-text/5">
+                    <img
+                      src={tea.imageDefault}
+                      alt={`${tea.name} cup`}
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out group-hover:opacity-0"
+                    />
+                    <img
+                      src={tea.imageHover}
+                      alt={`${tea.name} package`}
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-0 group-hover:opacity-100"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent mix-blend-overlay pointer-events-none z-10"></div>
+
+                    {/* Hover Overlay Title */}
+                    <div className="absolute inset-0 bg-brand-text/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px] z-20">
+                      <span className="font-sans text-white text-sm font-bold tracking-widest uppercase border-b border-white/50 pb-1">
+                        View Details
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-center pt-2">
+                    <h3 className="font-serif text-[22px] font-medium text-brand-text mb-1">
+                      {tea.name}
+                    </h3>
+                    <p className="font-sans text-[11px] text-brand-accent tracking-widest uppercase font-semibold">
+                      {tea.subtitle}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
       </main>
 
       {/* Footer */}
@@ -141,6 +198,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey }) => {
           <span className="font-light">© {new Date().getFullYear()} Detox Tea. All rights reserved.</span>
         </div>
       </footer>
+
+
     </div>
   );
 };

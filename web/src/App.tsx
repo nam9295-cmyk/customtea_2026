@@ -1,36 +1,41 @@
 import { useState } from 'react';
 import LandingPage from './LandingPage';
-import QuestionForm from './components/QuestionForm';
+import QuestionForm, { AnswerValue } from './components/QuestionForm';
 import ResultPage from './components/ResultPage';
+import TeaDetailModal from './components/TeaDetailModal';
+import { calculateBlendRatio, BlendResult } from './engine/calculator';
+import { TeaDetail } from './data/teaDetails';
 
 type ViewState = 'landing' | 'quiz' | 'result';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewState>('landing');
-  // Temporary storage, can be used later or sent to an API
-  const [, setUserAnswers] = useState<Record<string, string | string[]> | null>(null);
+  const [blendResult, setBlendResult] = useState<BlendResult[] | null>(null);
+  const [selectedTea, setSelectedTea] = useState<TeaDetail | null>(null);
 
   const handleStartSurvey = () => {
     setCurrentView('quiz');
-    window.scrollTo(0, 0); // Ensure user is at top of screen for quiz
+    window.scrollTo(0, 0);
   };
 
   const handleCloseSurvey = () => {
     setCurrentView('landing');
   };
 
-  const handleSurveyComplete = (answers: Record<string, string | string[]>) => {
-    setUserAnswers(answers);
+  const handleSurveyComplete = (answers: Record<string, AnswerValue>) => {
+    const results = calculateBlendRatio(answers);
+    setBlendResult(results);
     setCurrentView('result');
     window.scrollTo(0, 0);
   };
 
   return (
     <>
-      <LandingPage onStartSurvey={handleStartSurvey} />
+      <LandingPage
+        onStartSurvey={handleStartSurvey}
+        onSelectTea={setSelectedTea}
+      />
 
-      {/* Conditionally render forms over the landing page so it doesn't unmount immediately feeling abrupt. 
-          The full screen nature of the quiz masks the landing page underneath. */}
       {currentView === 'quiz' && (
         <QuestionForm
           onClose={handleCloseSurvey}
@@ -38,10 +43,13 @@ function App() {
         />
       )}
 
-      {currentView === 'result' && (
-        <div className="fixed inset-0 z-[200]">
-          <ResultPage />
-        </div>
+      {currentView === 'result' && blendResult && (
+        <ResultPage blendResult={blendResult} onRestart={handleCloseSurvey} />
+      )}
+
+      {/* Modal rendered at root level — no z-index conflict */}
+      {selectedTea && (
+        <TeaDetailModal tea={selectedTea} onClose={() => setSelectedTea(null)} />
       )}
     </>
   );
