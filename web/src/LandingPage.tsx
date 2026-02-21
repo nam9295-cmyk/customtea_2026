@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Leaf } from 'lucide-react';
 import { navLinks } from './data/landingData';
-import { teaDetails, TeaDetail } from './data/teaDetails';
+import { teaDetails } from './data/teaDetails';
+import TeaDetailModal from './components/TeaDetailModal';
 import TeaPreviewCard from './components/TeaPreviewCard';
+import { BrandStorySlider } from './components/BrandStorySlider';
 
 interface LandingPageProps {
   onStartSurvey: () => void;
-  onSelectTea: (tea: TeaDetail) => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey, onSelectTea }) => {
+export function LandingPage({ onStartSurvey }: LandingPageProps) {
+  const [selectedTeaId, setSelectedTeaId] = useState<string | null>(null);
   const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
+  const [showBrandStory, setShowBrandStory] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -78,8 +82,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey, onSelectTea })
                 >
                   나만의 블렌드 찾기
                 </button>
-                <button className="border border-brand-text/20 text-brand-text px-10 py-5 rounded-sm text-[16px] font-medium hover:border-brand-accent hover:text-brand-accent transition-colors duration-300">
-                  브랜드 스토리
+                <button
+                  onClick={() => setShowBrandStory(true)}
+                  className="bg-brand-bg text-brand-text px-10 py-5 rounded-sm text-[16px] font-medium hover:bg-brand-text/5 transition-colors duration-300 shadow-sm flex items-center justify-center gap-2"
+                >
+                  브랜드 스토리 <ArrowRight size={18} />
                 </button>
               </div>
             </div>
@@ -145,7 +152,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey, onSelectTea })
               {teaDetails.map((tea, index) => (
                 <div
                   key={tea.id}
-                  onClick={() => onSelectTea(tea)}
+                  onClick={() => setSelectedTeaId(tea.id)}
                   className="group cursor-pointer flex flex-col space-y-4 animate-fade-in"
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
@@ -188,24 +195,37 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartSurvey, onSelectTea })
       {/* Footer */}
       <footer className="w-full text-brand-text/50 bg-white px-6 md:px-[120px] py-[80px] flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-t border-brand-text/5">
         <div className="flex flex-col gap-4">
-          <span className="font-serif text-2xl font-semibold tracking-widest text-brand-text uppercase">Detox Tea</span>
-          <p className="text-[14px] text-brand-text/50 font-light max-w-[300px] break-keep">
-            Premium Personalized Tea Blending Service. Find your balance today.
+          <div className="flex items-center gap-2">
+            <Leaf size={18} className="text-brand-accent opacity-80" />
+            <span className="font-serif text-xl tracking-[0.1em] text-brand-text uppercase">Detox Tea</span>
+          </div>
+          <p className="text-sm font-light leading-relaxed max-w-[400px]">
+            자연이 주는 온전한 휴식, 디톡스 티.<br />당신의 일상에 건강한 비움을 선사합니다.
           </p>
         </div>
-        <div className="flex flex-col items-end gap-6 text-[13px] font-medium tracking-wide font-sans">
-          <div className="flex gap-8">
-            <a href="#" className="hover:text-brand-accent transition-colors">INSTAGRAM</a>
-            <a href="#" className="hover:text-brand-accent transition-colors">CONTACT</a>
-            <a href="#" className="hover:text-brand-accent transition-colors">LEGAL</a>
+        <div className="flex flex-col md:text-right gap-2 text-sm font-light">
+          <p>© 2026 Detox Tea Co. All rights reserved.</p>
+          <div className="flex gap-4 md:justify-end">
+            <a href="#" className="hover:text-brand-accent transition-colors">Instagram</a>
+            <a href="#" className="hover:text-brand-accent transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-brand-accent transition-colors">Contact</a>
           </div>
-          <span className="font-light">© {new Date().getFullYear()} Detox Tea. All rights reserved.</span>
         </div>
       </footer>
 
+      {/* Modals */}
+      {selectedTeaId && (
+        <TeaDetailModal
+          tea={teaDetails.find(t => t.id === selectedTeaId)!}
+          onClose={() => setSelectedTeaId(null)}
+        />
+      )}
 
+      {showBrandStory && (
+        <BrandStorySlider onClose={() => setShowBrandStory(false)} />
+      )}
     </div>
   );
-};
+}
 
 export default LandingPage;

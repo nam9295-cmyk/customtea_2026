@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import LandingPage from './LandingPage';
+import { LandingPage } from './LandingPage';
 import QuestionForm, { AnswerValue } from './components/QuestionForm';
 import ResultPage from './components/ResultPage';
 import TeaDetailModal from './components/TeaDetailModal';
@@ -33,7 +33,6 @@ function App() {
     <>
       <LandingPage
         onStartSurvey={handleStartSurvey}
-        onSelectTea={setSelectedTea}
       />
 
       {currentView === 'quiz' && (
