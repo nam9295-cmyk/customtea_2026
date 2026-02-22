@@ -1,19 +1,20 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Leaf } from 'lucide-react';
-import { navLinks } from './data/landingData';
 import { teaDetails } from './data/teaDetails';
 import TeaDetailModal from './components/TeaDetailModal';
 import TeaPreviewCard from './components/TeaPreviewCard';
+import { motion } from 'framer-motion';
 
 const BrandStorySlider = lazy(() =>
   import('./components/BrandStorySlider').then((module) => ({ default: module.BrandStorySlider })),
 );
 
-interface LandingPageProps {
+export interface LandingPageProps {
   onStartSurvey: () => void;
+  showLogo?: boolean;
 }
 
-export function LandingPage({ onStartSurvey }: LandingPageProps) {
+export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps) {
   const [selectedTeaId, setSelectedTeaId] = useState<string | null>(null);
   const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
   const [showBrandStory, setShowBrandStory] = useState(false);
@@ -60,31 +61,29 @@ export function LandingPage({ onStartSurvey }: LandingPageProps) {
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent/30 selection:text-white animate-fade-in relative">
 
       {/* Navigation Bar */}
-      <nav className="w-full h-[90px] border-b border-brand-text/5 px-6 md:px-[120px] flex items-center justify-between bg-brand-bg/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
-        <a href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 flex items-center justify-center rounded-sm bg-brand-accent group-hover:bg-[#e4b5b4] transition-colors">
-            <span className="font-serif text-white text-lg italic">D</span>
-          </div>
-          <span className="font-serif text-2xl font-semibold tracking-[0.1em] text-brand-text uppercase">
-            Detox Tea
-          </span>
+      <nav className="w-full h-[90px] border-b border-brand-text/5 px-6 md:px-[120px] grid grid-cols-3 items-center bg-brand-bg/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
+
+        {/* Left Side (Empty spacer to balance center alignment) */}
+        <div></div>
+
+        {/* Center Logo */}
+        <a href="/" className="flex items-center justify-center group w-full">
+          {showLogo ? (
+            <motion.img
+              layoutId="main-logo"
+              src="/images/logo.png"
+              alt="CUSTOM TEA"
+              className="h-8 md:h-10 w-auto object-contain cursor-pointer"
+              transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1] as [number, number, number, number] }}
+              onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            />
+          ) : (
+            <div className="h-8 md:h-10 w-[140px]" /> // Placeholder matching logo width
+          )}
         </a>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-12 font-medium tracking-wide text-[15px]">
-          {navLinks.map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="text-brand-text/70 hover:text-brand-accent transition-colors duration-300">
-              {item}
-            </a>
-          ))}
-        </div>
-
-        <button
-          onClick={onStartSurvey}
-          className="bg-brand-text text-brand-bg px-8 py-3 rounded-sm text-sm font-semibold hover:bg-brand-text/80 transition-colors duration-300 shadow-sm"
-        >
-          시작하기
-        </button>
+        {/* Right CTA (Empty spacer to balance center alignment) */}
+        <div></div>
       </nav>
 
       {/* Main Content */}

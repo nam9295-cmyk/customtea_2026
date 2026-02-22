@@ -1,5 +1,7 @@
 import { lazy, Suspense, useState } from 'react';
 import { LandingPage } from './LandingPage';
+import { IntroLoader } from './components/IntroLoader';
+import { AnimatePresence } from 'framer-motion';
 import type { AnswerValue } from './components/QuestionForm';
 import { calculateBlendRatio, BlendResult } from './engine/calculator';
 
@@ -15,6 +17,7 @@ function ViewFallback() {
 function App() {
   const [currentView, setCurrentView] = useState<ViewState>('landing');
   const [blendResult, setBlendResult] = useState<BlendResult[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleStartSurvey = () => {
     setCurrentView('quiz');
@@ -34,10 +37,19 @@ function App() {
 
   return (
     <>
+      <AnimatePresence>
+        {isLoading && (
+          <IntroLoader key="intro-loader" onLoadingComplete={() => setIsLoading(false)} />
+        )}
+      </AnimatePresence>
+
       {currentView === 'landing' && (
-        <LandingPage
-          onStartSurvey={handleStartSurvey}
-        />
+        <div className="w-full min-h-screen">
+          <LandingPage
+            showLogo={!isLoading}
+            onStartSurvey={handleStartSurvey}
+          />
+        </div>
       )}
 
       {currentView === 'quiz' && (
