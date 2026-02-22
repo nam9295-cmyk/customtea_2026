@@ -1,12 +1,13 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 
 export function Hero() {
     const { scrollY } = useScroll();
+    const smoothScrollY = useSpring(scrollY, { stiffness: 120, damping: 28, mass: 0.45, restDelta: 0.001 });
 
     // Text enters the box: slides down INTO the box, shrinks, fades out near end of box
-    const textY = useTransform(scrollY, [0, 400], [0, 260]);
-    const textScale = useTransform(scrollY, [0, 400], [1, 0.6]);
-    const textOpacity = useTransform(scrollY, [550, 750], [1, 0]);
+    const textY = useTransform(smoothScrollY, [0, 400], [0, 260]);
+    const textScale = useTransform(smoothScrollY, [0, 400], [1, 0.6]);
+    const textOpacity = useTransform(smoothScrollY, [550, 750], [1, 0]);
 
     return (
         <section className="relative w-full bg-white flex flex-col items-center pt-40 pb-16">
@@ -14,7 +15,7 @@ export function Hero() {
             {/* Typography (In FRONT of the box — z-20) */}
             <motion.div
                 style={{ y: textY, scale: textScale, opacity: textOpacity }}
-                className="relative z-20 flex flex-col items-center text-center px-6 mb-8"
+                className="relative z-20 flex flex-col items-center text-center px-6 mb-8 transform-gpu will-change-transform"
             >
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -36,7 +37,7 @@ export function Hero() {
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="relative z-10 w-[95%] max-w-6xl mx-auto aspect-[4/5] md:aspect-video bg-gray-100 rounded-[2.5rem] overflow-hidden shadow-xl flex items-center justify-center group"
+                className="relative z-10 w-[95%] max-w-6xl mx-auto aspect-[4/5] md:aspect-video bg-gray-100 rounded-[2.5rem] overflow-hidden shadow-xl flex items-center justify-center group transform-gpu will-change-transform [contain:paint]"
             >
                 {/* Hero Background Video */}
                 <video

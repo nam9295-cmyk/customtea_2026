@@ -9,31 +9,32 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start end", "end end"]
+        offset: ["start end", "end end"],
     });
 
     // Core Spring for organic, liquid-like dragging tracking
-    const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
+    const smoothProgress = useSpring(scrollYProgress, { stiffness: 44, damping: 30, mass: 0.5, restDelta: 0.003 });
 
     // Scroll Velocity to calculate real-time tension/bounce effects on UI
     const scrollVelocity = useVelocity(smoothProgress);
-    const velocityMagnitude = useTransform(scrollVelocity, (v) => Math.min(Math.abs(v) * 2, 1));
+    const smoothVelocity = useSpring(scrollVelocity, { stiffness: 120, damping: 36, mass: 0.3, restDelta: 0.001 });
+    const velocityMagnitude = useTransform(smoothVelocity, (v) => Math.min(Math.abs(v) * 0.35, 1));
 
     // Sliders Tense up when actively blending/scrolling
-    const thumbScale = useTransform(velocityMagnitude, [0, 1], [1, 1.3]);
+    const thumbScale = useTransform(velocityMagnitude, [0, 1], [1, 1.08]);
     const thumbShadow = useTransform(velocityMagnitude, [0, 1],
-        ["0px 2px 4px rgba(0,0,0,0.1)", "0px 8px 16px rgba(0,0,0,0.25)"]
+        ["0px 1px 2px rgba(0,0,0,0.08)", "0px 4px 8px rgba(0,0,0,0.18)"],
     );
-    const textBouncyScale = useTransform(velocityMagnitude, [0, 1], [1, 1.15]);
+    const textBouncyScale = useTransform(velocityMagnitude, [0, 1], [1, 1.06]);
 
     // 1. Right Box - Sliders Mapping (using smoothProgress)
     const cacaoWidth = useTransform(smoothProgress, [0, 1], ["0%", "55%"]);
     const cacaoNum = useTransform(smoothProgress, [0, 1], [0, 55]);
-    const cacaoText = useTransform(cacaoNum, v => Math.round(v) + "%");
+    const cacaoText = useTransform(cacaoNum, (v) => `${Math.round(v)}%`);
 
     const hibisWidth = useTransform(smoothProgress, [0, 1], ["0%", "81%"]);
     const hibisNum = useTransform(smoothProgress, [0, 1], [0, 81]);
-    const hibisText = useTransform(hibisNum, v => Math.round(v) + "%");
+    const hibisText = useTransform(hibisNum, (v) => `${Math.round(v)}%`);
 
     // 2. Left Box - Top Liquid Mapping
     const liquidColor = useTransform(smoothProgress, [0, 0.5, 1], ["rgba(93, 64, 55, 0.05)", "rgba(180, 60, 60, 0.4)", "rgba(255, 20, 147, 0.65)"]);
@@ -61,14 +62,14 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
     const sweetnessWidth = useTransform(smoothProgress, [0, 1], ["15%", "45%"]);
 
     return (
-        <section ref={containerRef} className="relative w-full min-h-[300vh] bg-[#fdfbf9]">
+        <section ref={containerRef} className="relative w-full min-h-[280svh] md:min-h-[300vh] bg-[#fdfbf9]">
             {/* Sticky Wrapper - anchors the viewport during 300vh scroll. */}
-            <div className="sticky top-0 h-[100dvh] w-full flex items-center justify-center pt-2 md:pt-24 lg:pt-0 overflow-hidden">
+            <div className="sticky top-0 h-[100svh] md:h-[100dvh] w-full flex items-center justify-center pt-2 md:pt-24 lg:pt-0 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 md:px-8 w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 lg:gap-16 items-start lg:items-center">
 
                         {/* LEFT AREA: Integrated Visualization Data (Column) */}
-                        <div className="relative w-full rounded-2xl md:rounded-3xl bg-white shadow-xl border border-brand-text/5 flex flex-col items-center justify-center p-3 sm:p-6 lg:p-10 gap-3 sm:gap-6 lg:gap-10 shrink-0">
+                        <div className="relative w-full rounded-2xl md:rounded-3xl bg-white shadow-xl border border-brand-text/5 flex flex-col items-center justify-center p-3 sm:p-6 lg:p-10 gap-3 sm:gap-6 lg:gap-10 shrink-0 [contain:layout_paint]">
 
                             {/* TOP: Dynamic Teapot */}
                             <div className="relative w-[130px] h-[130px] sm:w-[200px] sm:h-[200px] lg:w-[320px] lg:h-[320px] shrink-0">
@@ -86,7 +87,7 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                     }}
                                 >
                                     <motion.div
-                                        className="absolute inset-x-[15%] bottom-[12%] top-[30%]"
+                                        className="absolute inset-x-[15%] bottom-[12%] top-[30%] will-change-[background-color]"
                                         style={{ backgroundColor: liquidColor, borderRadius: '40% 40% 45% 45%' }}
                                     />
                                 </div>
@@ -107,7 +108,7 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                             <polygon points="50,27 72,43 64,68 36,68 28,43" fill="none" stroke="#e5e7eb" strokeWidth="1" />
 
                                             {/* Animated Data Polygon */}
-                                            <motion.polygon points={radarPoints} fill="#edc5c4" fillOpacity="0.5" stroke="#edc5c4" strokeWidth="1.2" />
+                                            <motion.polygon points={radarPoints} fill="#edc5c4" fillOpacity="0.5" stroke="#edc5c4" strokeWidth="1.2" className="will-change-transform" />
 
                                             {/* Axis Labels */}
                                             <text x="50" y="-4" fontSize="6.5" fontWeight="600" textAnchor="middle" fill="#6b7280">릴렉스</text>
@@ -128,7 +129,7 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                                 <span>바디감</span>
                                             </div>
                                             <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-                                                <motion.div className="h-full bg-[#5D4037] rounded-full origin-left" style={{ width: bodyWidth }} />
+                                                <motion.div className="h-full bg-[#5D4037] rounded-full origin-left transform-gpu will-change-transform" style={{ width: bodyWidth }} />
                                             </div>
                                         </div>
                                         <div className="w-full">
@@ -136,7 +137,7 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                                 <span>신맛</span>
                                             </div>
                                             <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-                                                <motion.div className="h-full bg-brand-accent rounded-full origin-left" style={{ width: acidityWidth }} />
+                                                <motion.div className="h-full bg-brand-accent rounded-full origin-left transform-gpu will-change-transform" style={{ width: acidityWidth }} />
                                             </div>
                                         </div>
                                         <div className="w-full">
@@ -144,7 +145,7 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                                 <span>단맛</span>
                                             </div>
                                             <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-                                                <motion.div className="h-full bg-rose-300 rounded-full origin-left" style={{ width: sweetnessWidth }} />
+                                                <motion.div className="h-full bg-rose-300 rounded-full origin-left transform-gpu will-change-transform" style={{ width: sweetnessWidth }} />
                                             </div>
                                         </div>
                                     </div>
@@ -159,19 +160,19 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                     <div className="flex justify-between items-end mb-2 sm:mb-3">
                                         <span className="text-[10px] sm:text-xs font-bold text-brand-text tracking-widest">본연의 카카오</span>
                                         <motion.span
-                                            className="text-lg sm:text-2xl font-extrabold text-[#5D4037] origin-bottom-right"
+                                            className="text-lg sm:text-2xl font-extrabold text-[#5D4037] origin-bottom-right transform-gpu will-change-transform"
                                             style={{ scale: textBouncyScale }}
                                         >{cacaoText}</motion.span>
                                     </div>
                                     <div className="relative h-3 w-full bg-gray-200 rounded-full shadow-inner">
                                         <motion.div
-                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#8D6E63] to-[#5D4037] rounded-full origin-left overflow-visible"
+                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#8D6E63] to-[#5D4037] rounded-full origin-left overflow-visible transform-gpu will-change-transform"
                                             style={{ width: cacaoWidth }}
                                         >
-                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/20 blur-[2px] rounded-r-full" />
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/20 opacity-60 rounded-r-full" />
                                         </motion.div>
                                         <motion.div
-                                            className="absolute top-1/2 -ml-3 w-6 h-6 bg-white rounded-full border-[3px] border-[#5D4037] z-10"
+                                            className="absolute top-1/2 -ml-3 w-6 h-6 bg-white rounded-full border-[3px] border-[#5D4037] z-10 transform-gpu will-change-transform"
                                             style={{ left: cacaoWidth, y: "-50%", scale: thumbScale, boxShadow: thumbShadow }}
                                         />
                                     </div>
@@ -182,19 +183,19 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                     <div className="flex justify-between items-end mb-2 sm:mb-3">
                                         <span className="text-[10px] sm:text-xs font-bold text-brand-accent tracking-widest">프리미엄 히비스커스</span>
                                         <motion.span
-                                            className="text-lg sm:text-2xl font-extrabold text-brand-accent origin-bottom-right"
+                                            className="text-lg sm:text-2xl font-extrabold text-brand-accent origin-bottom-right transform-gpu will-change-transform"
                                             style={{ scale: textBouncyScale }}
                                         >{hibisText}</motion.span>
                                     </div>
                                     <div className="relative h-3 w-full bg-rose-50 rounded-full shadow-inner">
                                         <motion.div
-                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#edc5c4] to-[#c89f9e] rounded-full origin-left overflow-visible"
+                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#edc5c4] to-[#c89f9e] rounded-full origin-left overflow-visible transform-gpu will-change-transform"
                                             style={{ width: hibisWidth }}
                                         >
-                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/30 blur-[2px] rounded-r-full" />
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/30 opacity-70 rounded-r-full" />
                                         </motion.div>
                                         <motion.div
-                                            className="absolute top-1/2 -ml-3 w-6 h-6 bg-white rounded-full border-[3px] border-[#c89f9e] z-10"
+                                            className="absolute top-1/2 -ml-3 w-6 h-6 bg-white rounded-full border-[3px] border-[#c89f9e] z-10 transform-gpu will-change-transform"
                                             style={{ left: hibisWidth, y: "-50%", scale: thumbScale, boxShadow: thumbShadow }}
                                         />
                                     </div>
@@ -223,19 +224,19 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                     <div className="flex justify-between items-end mb-3">
                                         <span className="text-sm font-bold text-brand-text tracking-widest">본연의 카카오</span>
                                         <motion.span
-                                            className="text-3xl font-extrabold text-[#5D4037] origin-bottom-right"
+                                            className="text-3xl font-extrabold text-[#5D4037] origin-bottom-right transform-gpu will-change-transform"
                                             style={{ scale: textBouncyScale }}
                                         >{cacaoText}</motion.span>
                                     </div>
                                     <div className="relative h-4 w-full bg-gray-200 rounded-full shadow-inner">
                                         <motion.div
-                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#8D6E63] to-[#5D4037] rounded-full origin-left overflow-visible"
+                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#8D6E63] to-[#5D4037] rounded-full origin-left overflow-visible transform-gpu will-change-transform"
                                             style={{ width: cacaoWidth }}
                                         >
-                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/20 blur-[2px] rounded-r-full" />
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/20 opacity-60 rounded-r-full" />
                                         </motion.div>
                                         <motion.div
-                                            className="absolute top-1/2 -ml-3.5 w-7 h-7 bg-white rounded-full border-[3px] border-[#5D4037] z-10"
+                                            className="absolute top-1/2 -ml-3.5 w-7 h-7 bg-white rounded-full border-[3px] border-[#5D4037] z-10 transform-gpu will-change-transform"
                                             style={{ left: cacaoWidth, y: "-50%", scale: thumbScale, boxShadow: thumbShadow }}
                                         />
                                     </div>
@@ -246,19 +247,19 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                     <div className="flex justify-between items-end mb-3">
                                         <span className="text-sm font-bold text-brand-accent tracking-widest">프리미엄 히비스커스</span>
                                         <motion.span
-                                            className="text-3xl font-extrabold text-brand-accent origin-bottom-right"
+                                            className="text-3xl font-extrabold text-brand-accent origin-bottom-right transform-gpu will-change-transform"
                                             style={{ scale: textBouncyScale }}
                                         >{hibisText}</motion.span>
                                     </div>
                                     <div className="relative h-4 w-full bg-rose-50 rounded-full shadow-inner">
                                         <motion.div
-                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#edc5c4] to-[#c89f9e] rounded-full origin-left overflow-visible"
+                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#edc5c4] to-[#c89f9e] rounded-full origin-left overflow-visible transform-gpu will-change-transform"
                                             style={{ width: hibisWidth }}
                                         >
-                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/30 blur-[2px] rounded-r-full" />
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/30 opacity-70 rounded-r-full" />
                                         </motion.div>
                                         <motion.div
-                                            className="absolute top-1/2 -ml-3.5 w-7 h-7 bg-white rounded-full border-[3px] border-[#c89f9e] z-10"
+                                            className="absolute top-1/2 -ml-3.5 w-7 h-7 bg-white rounded-full border-[3px] border-[#c89f9e] z-10 transform-gpu will-change-transform"
                                             style={{ left: hibisWidth, y: "-50%", scale: thumbScale, boxShadow: thumbShadow }}
                                         />
                                     </div>

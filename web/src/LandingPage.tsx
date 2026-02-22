@@ -28,7 +28,7 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent/30 selection:text-white animate-fade-in relative">
 
       {/* Floating Pill Navigation */}
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[92%] md:w-[30%] max-w-3xl bg-white/90 backdrop-blur-md border border-gray-200 rounded-full px-5 py-3 md:px-8 flex items-center justify-between z-50 shadow-sm transition-all duration-300">
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[92%] md:w-[30%] max-w-3xl bg-white/95 md:bg-white/90 backdrop-blur-0 md:backdrop-blur-md border border-gray-200 rounded-full px-5 py-3 md:px-8 flex items-center justify-between z-50 shadow-sm transition-all duration-300">
 
         {/* Spacer for desktop flex balancing */}
         <div className="hidden md:block w-8"></div>
@@ -66,7 +66,7 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
           <motion.div
             initial={{ opacity: 0, y: 80 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             className="text-center w-full overflow-hidden"
           >
