@@ -8,6 +8,21 @@ export interface BlendResult {
     rawScore: number;
 }
 
+type WeightMap = Record<string, number>;
+type OptionWeightLookup = Record<string, Record<string, WeightMap>>;
+
+const optionWeightLookup: OptionWeightLookup = questions.reduce<OptionWeightLookup>((acc, question) => {
+    const questionOptions = question.options.reduce<Record<string, WeightMap>>((optionsAcc, option) => {
+        optionsAcc[option.value] = option.weights;
+        return optionsAcc;
+    }, {});
+
+    acc[question.id] = questionOptions;
+    return acc;
+}, {});
+
+const teaProfileList = Object.values(teaProfiles);
+
 export const calculateBlendRatio = (userAnswers: Record<string, string | string[]>): BlendResult[] => {
     // 1. Calculate total user weights
     const totalUserWeights: Record<string, number> = {};
@@ -18,20 +33,21 @@ export const calculateBlendRatio = (userAnswers: Record<string, string | string[
 
         // Ensure array for uniform processing
         const selectedValues = Array.isArray(answer) ? answer : [answer];
+        const questionLookup = optionWeightLookup[question.id];
 
-        selectedValues.forEach(value => {
-            const option = question.options.find(opt => opt.value === value);
-            if (option && option.weights) {
-                Object.entries(option.weights).forEach(([key, weight]) => {
-                    totalUserWeights[key] = (totalUserWeights[key] || 0) + weight;
-                });
-            }
+        selectedValues.forEach((value) => {
+            const optionWeights = questionLookup?.[value];
+            if (!optionWeights) return;
+
+            Object.entries(optionWeights).forEach(([key, weight]) => {
+                totalUserWeights[key] = (totalUserWeights[key] || 0) + weight;
+            });
         });
     });
 
     // 2. Score each tea profile
     let totalScore = 0;
-    const rawScores = Object.values(teaProfiles).map(tea => {
+    const rawScores = teaProfileList.map((tea) => {
         let matchScore = 0;
 
         // Multiply tea scores by user preferred weights
@@ -52,11 +68,11 @@ export const calculateBlendRatio = (userAnswers: Record<string, string | string[
     });
 
     // 3. Convert to percentages and sort
-    const results: BlendResult[] = rawScores.map(tea => {
+    const results: BlendResult[] = rawScores.map((tea) => {
         const ratio = totalScore > 0 ? Math.round((tea.rawScore / totalScore) * 100) : 0;
         return {
             ...tea,
-            ratio
+            ratio,
         };
     });
 

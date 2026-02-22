@@ -40,11 +40,11 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
 
     // 3. Left Box - Bottom Radar Chart Polygon Mapping
     const radarPoints = useTransform(smoothProgress, (v) => {
-        let relaxation = 20 + v * 40;
-        let immunity = 20 + v * 60;
-        let digestion = 20 + v * 70;
-        let energy = 20 + v * 30;
-        let respiratory = 20 + v * 50;
+        const relaxation = 20 + v * 40;
+        const immunity = 20 + v * 60;
+        const digestion = 20 + v * 70;
+        const energy = 20 + v * 30;
+        const respiratory = 20 + v * 50;
 
         const getPt = (val: number, angleDeg: number) => {
             const rad = (angleDeg - 90) * (Math.PI / 180);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { questions } from '../data/questions';
 
 export type AnswerValue = string | string[];
@@ -21,30 +21,35 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ onClose, onComplete }) => {
     const currentAnswer = answers[currentQuestion.id];
     const isAnswered = currentAnswer !== undefined && (Array.isArray(currentAnswer) ? currentAnswer.length > 0 : true);
 
-    const handleOptionSelect = (optionValue: string) => {
-        if (currentQuestion.type === 'multiple') {
-            const currentList = (answers[currentQuestion.id] as string[]) || [];
-            if (currentList.includes(optionValue)) {
-                setAnswers({ ...answers, [currentQuestion.id]: currentList.filter(v => v !== optionValue) });
-            } else {
-                setAnswers({ ...answers, [currentQuestion.id]: [...currentList, optionValue] });
-            }
-        } else {
-            setAnswers({ ...answers, [currentQuestion.id]: optionValue });
-        }
-    };
+    const handleOptionSelect = useCallback((optionValue: string) => {
+        const questionId = currentQuestion.id;
+        const questionType = currentQuestion.type;
 
-    const handleNext = () => {
+        setAnswers((prev) => {
+            if (questionType === 'multiple') {
+                const currentList = (prev[questionId] as string[]) || [];
+                const nextList = currentList.includes(optionValue)
+                    ? currentList.filter((v) => v !== optionValue)
+                    : [...currentList, optionValue];
+
+                return { ...prev, [questionId]: nextList };
+            }
+
+            return { ...prev, [questionId]: optionValue };
+        });
+    }, [currentQuestion.id, currentQuestion.type]);
+
+    const handleNext = useCallback(() => {
         if (isLastStep) {
             onComplete(answers);
         } else {
-            setCurrentStep(s => s + 1);
+            setCurrentStep((s) => s + 1);
         }
-    };
+    }, [answers, isLastStep, onComplete]);
 
-    const handlePrev = () => {
-        setCurrentStep(s => Math.max(0, s - 1));
-    };
+    const handlePrev = useCallback(() => {
+        setCurrentStep((s) => Math.max(0, s - 1));
+    }, []);
 
     return (
         <div className="fixed inset-0 z-[100] bg-[#FDFCFB]/60 backdrop-blur-md flex justify-center items-start pt-16 md:pt-24 pb-16 px-4 animate-fade-in overflow-y-auto">

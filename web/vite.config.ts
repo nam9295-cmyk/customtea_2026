@@ -6,13 +6,5 @@ export default defineConfig({
   plugins: [react()],
   build: {
     modulePreload: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor-charts': ['recharts'],
-          'vendor-icons': ['lucide-react'],
-        },
-      },
-    },
   },
 })

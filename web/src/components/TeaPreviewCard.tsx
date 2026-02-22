@@ -1,4 +1,4 @@
-import TeaRadarChart from './TeaRadarChart';
+import { lazy, memo, Suspense } from 'react';
 import type { TeaDetail } from '../data/teaDetails';
 
 interface TeaPreviewCardProps {
@@ -7,6 +7,26 @@ interface TeaPreviewCardProps {
   compact?: boolean;
   /** Chart rendering can be disabled to keep the first screen lightweight. */
   showChart?: boolean;
+}
+
+const TeaRadarChart = lazy(() => import('./TeaRadarChart'));
+
+function ChartFallback({ tea }: { tea: TeaDetail }) {
+  return (
+    <div className="h-full w-full rounded-xl border border-gray-100 bg-[#fafafa] p-3 flex flex-col justify-center gap-2">
+      {tea.radarData.slice(0, 3).map((point) => (
+        <div key={point.subject} className="space-y-1">
+          <div className="text-[10px] leading-none text-brand-text/55">{point.subject}</div>
+          <div className="h-1.5 rounded-full bg-brand-text/10 overflow-hidden">
+            <div
+              className="h-full rounded-full"
+              style={{ width: `${point.A}%`, backgroundColor: tea.chartColor }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function TeaPreviewCard({ tea, compact = false, showChart = !compact }: TeaPreviewCardProps) {
@@ -37,21 +57,11 @@ function TeaPreviewCard({ tea, compact = false, showChart = !compact }: TeaPrevi
         </div>
         <div className={`${layoutRatio} min-w-0 flex items-center justify-center`}>
           {showChart ? (
-            <TeaRadarChart data={tea.radarData} chartColor={tea.chartColor} fontSize={fontSize} />
+            <Suspense fallback={<ChartFallback tea={tea} />}>
+              <TeaRadarChart data={tea.radarData} chartColor={tea.chartColor} fontSize={fontSize} />
+            </Suspense>
           ) : (
-            <div className="h-full w-full rounded-xl border border-gray-100 bg-[#fafafa] p-3 flex flex-col justify-center gap-2">
-              {tea.radarData.slice(0, 3).map((point) => (
-                <div key={point.subject} className="space-y-1">
-                  <div className="text-[10px] leading-none text-brand-text/55">{point.subject}</div>
-                  <div className="h-1.5 rounded-full bg-brand-text/10 overflow-hidden">
-                    <div
-                      className="h-full rounded-full"
-                      style={{ width: `${point.A}%`, backgroundColor: tea.chartColor }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ChartFallback tea={tea} />
           )}
         </div>
       </div>
@@ -85,4 +95,4 @@ function TeaPreviewCard({ tea, compact = false, showChart = !compact }: TeaPrevi
   );
 }
 
-export default TeaPreviewCard;
+export default memo(TeaPreviewCard);

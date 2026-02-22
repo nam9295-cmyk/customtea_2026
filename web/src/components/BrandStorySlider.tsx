@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar, XAxis, YAxis, Cell } from 'recharts';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -59,6 +59,10 @@ const STAT_LABELS = { respiratory: '호흡기', immunity: '면역력', digestion
 const FLAVOR_LABELS = { sweet: '단맛', bitter: '쓴맛', nutty: '고소함', body: '바디감', aroma: '향' }
 const FLAVOR_COLORS = ['#F472B6', '#FB923C', '#A78BFA', '#38BDF8', '#4ADE80']
 const TEA_DATA_ARRAY = Object.values(TEA_PRODUCTS);
+const STAT_KEYS = Object.keys(STAT_LABELS) as Array<keyof typeof STAT_LABELS>;
+const FLAVOR_KEYS = Object.keys(FLAVOR_LABELS) as Array<keyof typeof FLAVOR_LABELS>;
+
+const createInitialBlendValues = () => ({ slot1: 30, slot2: 20, slot3: 50 });
 
 interface SliderProps {
     label: string;
@@ -93,10 +97,11 @@ interface BrandStorySliderProps {
 
 export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-    const [values, setValues] = useState({ slot1: 30, slot2: 20, slot3: 50 });
+    const [values, setValues] = useState(createInitialBlendValues);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [visible, setVisible] = useState(false);
     const [canCloseByBackdrop, setCanCloseByBackdrop] = useState(false);
+    const slideTimerRef = useRef<number | null>(null);
 
     // Trigger the entrance animation on mount
     useEffect(() => {
@@ -107,6 +112,10 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
             setCanCloseByBackdrop(true);
         }, 0);
         return () => {
+            if (slideTimerRef.current) {
+                window.clearTimeout(slideTimerRef.current);
+                slideTimerRef.current = null;
+            }
             cancelAnimationFrame(t);
             window.clearTimeout(interactiveTimer);
             document.body.style.overflow = originalOverflow;
@@ -119,19 +128,27 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
     };
 
     const currentTea = TEA_DATA_ARRAY[currentSlideIndex];
-    const ingredientKeys = Object.keys(currentTea.ingredients) as Array<keyof typeof currentTea.ingredients>;
+    const ingredientKeys = useMemo(
+        () => Object.keys(currentTea.ingredients) as Array<keyof typeof currentTea.ingredients>,
+        [currentTea],
+    );
 
     const handleSlideChange = (direction: 'next' | 'prev') => {
         if (isTransitioning) return;
         setIsTransitioning(true);
-        setTimeout(() => {
+        if (slideTimerRef.current) {
+            window.clearTimeout(slideTimerRef.current);
+        }
+
+        slideTimerRef.current = window.setTimeout(() => {
             if (direction === 'next') {
                 setCurrentSlideIndex((prev) => (prev + 1) % TEA_DATA_ARRAY.length);
             } else {
                 setCurrentSlideIndex((prev) => (prev - 1 + TEA_DATA_ARRAY.length) % TEA_DATA_ARRAY.length);
             }
-            setValues({ slot1: 30, slot2: 20, slot3: 50 });
+            setValues(createInitialBlendValues());
             setIsTransitioning(false);
+            slideTimerRef.current = null;
         }, 400);
     };
 
@@ -167,11 +184,10 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
         const keys = ingredientKeys;
         const vals = [values.slot1, values.slot2, values.slot3];
 
-        return Object.keys(STAT_LABELS).map(statKey => {
+        return STAT_KEYS.map((statKey) => {
             let weightedSum = 0;
             if (total > 0) {
                 keys.forEach((key, i) => {
-                    // @ts-expect-error dynamic indexing
                     weightedSum += (ing[key]?.stats[statKey] || 0) * vals[i];
                 });
             }
@@ -185,11 +201,10 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
         const keys = ingredientKeys;
         const vals = [values.slot1, values.slot2, values.slot3];
 
-        return Object.keys(FLAVOR_LABELS).map(flavorKey => {
+        return FLAVOR_KEYS.map((flavorKey) => {
             let weightedSum = 0;
             if (total > 0) {
                 keys.forEach((key, i) => {
-                    // @ts-expect-error dynamic indexing
                     weightedSum += (ing[key]?.flavor[flavorKey] || 0) * vals[i];
                 });
             }
@@ -351,7 +366,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
                                     onClick={() => {
                                         if (isTransitioning || idx === currentSlideIndex) return;
                                         setCurrentSlideIndex(idx);
-                                        setValues({ slot1: 30, slot2: 20, slot3: 50 });
+                                        setValues(createInitialBlendValues());
                                     }}
                                     className={`h-2 rounded-full transition-all duration-500 ${idx === currentSlideIndex
                                         ? 'bg-brand-accent w-10'

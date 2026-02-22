@@ -1,10 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-export interface HeroProps {
-    // onStartSurvey: () => void;
-    // onOpenBrandStory: () => void;
-}
-
 export function Hero() {
     const { scrollY } = useScroll();
 

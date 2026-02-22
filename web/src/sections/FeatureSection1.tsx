@@ -9,6 +9,7 @@ export interface FeatureSection1Props {
 
 export function FeatureSection1({ onStartSurvey }: FeatureSection1Props) {
     const [activeIndex, setActiveIndex] = useState(0);
+    const activeTea = teaDetails[activeIndex];
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -45,21 +46,20 @@ export function FeatureSection1({ onStartSurvey }: FeatureSection1Props) {
 
                     {/* Media Carousel (Top on Mobile, Right on Desktop) */}
                     <div className="w-full h-[350px] md:h-full md:min-h-[500px] relative p-0 overflow-hidden md:rounded-bl-none md:rounded-r-2xl bg-[#fcf9f9] flex items-center justify-center pointer-events-none">
-                        <AnimatePresence>
-                            {teaDetails.map((tea, index) => (
-                                <motion.div
-                                    key={tea.id}
-                                    className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: index === activeIndex ? 1 : 0 }}
-                                    transition={{ duration: 2.5, ease: "easeInOut" }}
-                                >
-                                    {/* Scale down slightly on mobile to fit the container perfectly */}
-                                    <div className="transform scale-75 md:scale-100 flex items-center justify-center w-full h-full">
-                                        <TeaDetailModal tea={tea} onClose={() => { }} isInline={true} />
-                                    </div>
-                                </motion.div>
-                            ))}
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeTea.id}
+                                className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 1.2, ease: "easeInOut" }}
+                            >
+                                {/* Scale down slightly on mobile to fit the container perfectly */}
+                                <div className="transform scale-75 md:scale-100 flex items-center justify-center w-full h-full">
+                                    <TeaDetailModal tea={activeTea} onClose={() => { }} isInline={true} showChart={false} />
+                                </div>
+                            </motion.div>
                         </AnimatePresence>
                         <div className="absolute inset-0 bg-black/5 mix-blend-multiply pointer-events-none"></div>
                     </div>
