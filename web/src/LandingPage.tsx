@@ -33,8 +33,8 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
         {/* Spacer for desktop flex balancing */}
         <div className="hidden md:block w-8"></div>
 
-        {/* Logo (Left on Mobile, Absolute Center on Desktop) */}
-        <a href="/" className="flex items-center md:absolute md:left-1/2 md:-translate-x-1/2">
+        {/* Logo (Absolute Center on All Screens) */}
+        <a href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center">
           {showLogo ? (
             <motion.img
               layoutId="main-logo"
@@ -62,16 +62,16 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
         <FeatureSection1 onStartSurvey={onStartSurvey} />
 
         {/* Transition Text Break */}
-        <section className="min-h-[40vh] py-16 px-6 flex items-center justify-center bg-white">
+        <section className="w-full min-h-[60vh] py-20 px-4 md:px-8 flex items-center justify-center bg-[#a67c7b]">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 80 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center"
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center w-full overflow-hidden"
           >
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-              내 몸이 원하는 완벽한 밸런스, <br className="hidden md:block" />직접 조율하세요.
+            <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-[#fdfbf9] tracking-tighter leading-none uppercase max-w-7xl mx-auto">
+              TAKE CONTROL<br />OF YOUR BLEND.
             </h2>
           </motion.div>
         </section>
@@ -81,16 +81,23 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
         {/* Signature Base Section */}
         <section className="w-full px-6 md:px-[120px] py-24 bg-brand-text/[0.02]">
           <div className="max-w-[1400px] mx-auto">
-            <div className="text-center mb-16 space-y-4 animate-fade-in">
-              <span className="font-sans text-xs tracking-[0.2em] text-brand-text/40 font-bold uppercase">
+            <div className="text-center mb-10 md:mb-16 space-y-3 md:space-y-4 animate-fade-in">
+              <span className="font-sans text-[10px] md:text-xs tracking-[0.2em] text-brand-text/40 font-bold uppercase">
                 Discover The Roots
               </span>
-              <h2 className="font-serif text-[32px] md:text-[40px] text-brand-text font-medium">
+              <h2 className="font-serif text-[28px] md:text-[40px] text-brand-text font-medium">
                 Our Signature Base
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {/* Mobile Scroll Indicator */}
+            <div className="flex md:hidden justify-center items-center gap-2 mb-6 text-brand-text/40 text-[10px] font-bold tracking-widest uppercase animate-pulse">
+              <span className="opacity-50">←</span>
+              <span>Swipe</span>
+              <span className="opacity-50">→</span>
+            </div>
+
+            <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 -mx-6 px-6 md:mx-0 md:px-0 pb-8 md:pb-0">
               {teaDetails.map((tea, index) => (
                 <div
                   key={tea.id}
@@ -98,7 +105,7 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
                     e.stopPropagation();
                     setSelectedTeaId(tea.id);
                   }}
-                  className="group cursor-pointer flex flex-col space-y-4 animate-fade-in"
+                  className="w-[260px] sm:w-[320px] md:w-auto shrink-0 snap-center md:snap-align-none group cursor-pointer flex flex-col space-y-3 md:space-y-4 animate-fade-in"
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
                   <div className="group relative aspect-square overflow-hidden bg-gray-50 w-full rounded-sm shadow-sm transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-xl border border-brand-text/5">

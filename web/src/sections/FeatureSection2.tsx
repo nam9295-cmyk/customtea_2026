@@ -62,16 +62,16 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
 
     return (
         <section ref={containerRef} className="relative w-full min-h-[300vh] bg-[#fdfbf9]">
-            {/* Sticky Wrapper - anchors the viewport during 300vh scroll */}
-            <div className="sticky top-0 h-[100dvh] w-full overflow-hidden flex items-center justify-center pt-16 lg:pt-0">
-                <div className="max-w-7xl mx-auto px-6 md:px-8 w-full">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            {/* Sticky Wrapper - anchors the viewport during 300vh scroll. */}
+            <div className="sticky top-0 h-[100dvh] w-full flex items-center justify-center pt-2 md:pt-24 lg:pt-0 overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 w-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 lg:gap-16 items-start lg:items-center">
 
                         {/* LEFT AREA: Integrated Visualization Data (Column) */}
-                        <div className="relative w-full rounded-3xl bg-white shadow-xl overflow-hidden border border-brand-text/5 flex flex-col items-center justify-center p-6 sm:p-8 lg:p-10 gap-8 lg:gap-10">
+                        <div className="relative w-full rounded-2xl md:rounded-3xl bg-white shadow-xl border border-brand-text/5 flex flex-col items-center justify-center p-3 sm:p-6 lg:p-10 gap-3 sm:gap-6 lg:gap-10 shrink-0">
 
                             {/* TOP: Dynamic Teapot */}
-                            <div className="relative w-[180px] h-[180px] sm:w-[240px] sm:h-[240px] lg:w-[320px] lg:h-[320px] shrink-0">
+                            <div className="relative w-[130px] h-[130px] sm:w-[200px] sm:h-[200px] lg:w-[320px] lg:h-[320px] shrink-0">
                                 <div
                                     className="absolute inset-0 z-10"
                                     style={{
@@ -94,13 +94,13 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                 <img src="/images/detox_order/teapot_mask.png" alt="Gloss Reflection" className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none opacity-60 mix-blend-screen" />
                             </div>
 
-                            {/* BOTTOM: Data Visualizations (Radar & Bar Charts) */}
+                            {/* MIDDLE: Data Visualizations (Radar & Bar Charts) */}
                             <div className="grid grid-cols-2 gap-4 sm:gap-6 w-full max-w-lg shrink-0">
 
                                 {/* Radar Chart (Health Balance) */}
-                                <div className="flex flex-col items-center bg-gray-50/50 p-4 sm:p-5 rounded-2xl border border-gray-100 h-[160px] sm:h-[180px]">
-                                    <h3 className="text-brand-text text-[9px] sm:text-[10px] font-serif font-bold tracking-widest uppercase mb-auto opacity-50">Health</h3>
-                                    <div className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] relative shrink-0">
+                                <div className="flex flex-col items-center bg-gray-50/50 p-2 sm:p-4 md:p-5 rounded-2xl border border-gray-100 h-[120px] sm:h-[160px] md:h-[180px]">
+                                    <h3 className="text-brand-text text-[8px] sm:text-[10px] font-serif font-bold tracking-widest uppercase mb-auto opacity-50">Health</h3>
+                                    <div className="w-[85px] h-[85px] sm:w-[110px] sm:h-[110px] relative shrink-0">
                                         <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
                                             {/* Grid Guidelines */}
                                             <polygon points="50,5 95,38 78,92 22,92 5,38" fill="none" stroke="#e5e7eb" strokeWidth="1" />
@@ -120,9 +120,9 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                 </div>
 
                                 {/* Bar Chart (Flavor Profile) */}
-                                <div className="flex flex-col items-start bg-gray-50/50 p-4 sm:p-5 rounded-2xl border border-gray-100 h-[160px] sm:h-[180px]">
-                                    <h3 className="text-brand-text text-[9px] sm:text-[10px] font-serif font-bold tracking-widest uppercase mb-auto opacity-50 w-full text-center">Flavor</h3>
-                                    <div className="flex flex-col justify-end gap-[14px] sm:gap-4 w-full h-full pb-2">
+                                <div className="flex flex-col items-start bg-gray-50/50 p-3 sm:p-4 md:p-5 rounded-2xl border border-gray-100 h-[120px] sm:h-[160px] md:h-[180px]">
+                                    <h3 className="text-brand-text text-[8px] sm:text-[10px] font-serif font-bold tracking-widest uppercase mb-auto opacity-50 w-full text-center">Flavor</h3>
+                                    <div className="flex flex-col justify-end gap-2 sm:gap-[14px] md:gap-4 w-full h-full pb-1 sm:pb-2">
                                         <div className="w-full">
                                             <div className="flex justify-between text-[9px] sm:text-[10px] font-bold text-brand-text opacity-70 mb-1">
                                                 <span>바디감</span>
@@ -151,92 +151,125 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                 </div>
 
                             </div>
-                        </div>
 
-                        {/* RIGHT AREA: Dynamic Sliders & Typography */}
-                        <div className="flex flex-col justify-center w-full max-w-xl mx-auto xl:mx-0 relative">
-                            <span className="text-xs sm:text-sm font-semibold text-brand-accent uppercase tracking-widest mb-3 sm:mb-4 text-center lg:text-left">
-                                SCROLL TO BLEND
-                            </span>
-                            <h2 className="text-[28px] sm:text-[32px] md:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.15] mb-4 sm:mb-6 tracking-tight text-center lg:text-left">
-                                스크롤하여 당신만의<br className="hidden sm:block" />비율을 완성하세요.
-                            </h2>
-                            <p className="text-brand-text/60 mb-8 sm:mb-12 text-sm sm:text-[15px] md:text-lg leading-relaxed font-light text-center lg:text-left">
-                                카카오의 깊고 묵직한 베이스에 상큼한 히비스커스가 더해지는 과정을 경험하세요. 휠을 움직일 때마다 환상적인 밸런스가 조율됩니다.
-                            </p>
-
-                            {/* Dashboard Area - Only Sliders */}
-                            <div className="flex flex-col gap-8 sm:gap-10 mb-8 sm:mb-12 w-full bg-white/60 p-6 sm:p-8 md:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white backdrop-blur-md">
-
+                            {/* BOTTOM ON MOBILE/TABLET: Desktop hides this. Sliders rendered exactly under charts. */}
+                            <div className="flex lg:hidden flex-col gap-4 sm:gap-6 md:gap-8 w-full max-w-lg shrink-0 mt-1 sm:mt-2 md:mt-4">
                                 {/* Cacao Thick Dynamic Slider */}
                                 <div className="relative w-full">
-                                    <div className="flex justify-between items-end mb-3">
-                                        <span className="text-xs md:text-sm font-bold text-brand-text tracking-widest">본연의 카카오</span>
+                                    <div className="flex justify-between items-end mb-2 sm:mb-3">
+                                        <span className="text-[10px] sm:text-xs font-bold text-brand-text tracking-widest">본연의 카카오</span>
                                         <motion.span
-                                            className="text-2xl md:text-3xl font-extrabold text-[#5D4037] origin-bottom-right"
+                                            className="text-lg sm:text-2xl font-extrabold text-[#5D4037] origin-bottom-right"
                                             style={{ scale: textBouncyScale }}
                                         >{cacaoText}</motion.span>
                                     </div>
-                                    <div className="relative h-3 md:h-4 w-full bg-gray-200 rounded-full shadow-inner">
-                                        {/* Thicker Fill Bar with Gradient */}
+                                    <div className="relative h-3 w-full bg-gray-200 rounded-full shadow-inner">
                                         <motion.div
                                             className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#8D6E63] to-[#5D4037] rounded-full origin-left overflow-visible"
                                             style={{ width: cacaoWidth }}
                                         >
-                                            {/* Glow overlay at tip */}
                                             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/20 blur-[2px] rounded-r-full" />
                                         </motion.div>
-
-                                        {/* Dynamic Tension Thumb Tracker */}
                                         <motion.div
-                                            className="absolute top-1/2 -ml-3 sm:-ml-3.5 w-6 h-6 sm:w-7 sm:h-7 bg-white rounded-full border-[3px] border-[#5D4037] z-10"
-                                            style={{
-                                                left: cacaoWidth,
-                                                y: "-50%",
-                                                scale: thumbScale,
-                                                boxShadow: thumbShadow
-                                            }}
+                                            className="absolute top-1/2 -ml-3 w-6 h-6 bg-white rounded-full border-[3px] border-[#5D4037] z-10"
+                                            style={{ left: cacaoWidth, y: "-50%", scale: thumbScale, boxShadow: thumbShadow }}
                                         />
                                     </div>
                                 </div>
 
                                 {/* Hibiscus Thick Dynamic Slider */}
                                 <div className="relative w-full">
-                                    <div className="flex justify-between items-end mb-3">
-                                        <span className="text-xs md:text-sm font-bold text-brand-accent tracking-widest">프리미엄 히비스커스</span>
+                                    <div className="flex justify-between items-end mb-2 sm:mb-3">
+                                        <span className="text-[10px] sm:text-xs font-bold text-brand-accent tracking-widest">프리미엄 히비스커스</span>
                                         <motion.span
-                                            className="text-2xl md:text-3xl font-extrabold text-brand-accent origin-bottom-right"
+                                            className="text-lg sm:text-2xl font-extrabold text-brand-accent origin-bottom-right"
                                             style={{ scale: textBouncyScale }}
                                         >{hibisText}</motion.span>
                                     </div>
-                                    <div className="relative h-3 md:h-4 w-full bg-rose-50 rounded-full shadow-inner">
+                                    <div className="relative h-3 w-full bg-rose-50 rounded-full shadow-inner">
                                         <motion.div
                                             className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#edc5c4] to-[#c89f9e] rounded-full origin-left overflow-visible"
                                             style={{ width: hibisWidth }}
                                         >
-                                            {/* Glow overlay at tip */}
                                             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/30 blur-[2px] rounded-r-full" />
                                         </motion.div>
-
                                         <motion.div
-                                            className="absolute top-1/2 -ml-3 sm:-ml-3.5 w-6 h-6 sm:w-7 sm:h-7 bg-white rounded-full border-[3px] border-[#c89f9e] z-10"
-                                            style={{
-                                                left: hibisWidth,
-                                                y: "-50%",
-                                                scale: thumbScale,
-                                                boxShadow: thumbShadow
-                                            }}
+                                            className="absolute top-1/2 -ml-3 w-6 h-6 bg-white rounded-full border-[3px] border-[#c89f9e] z-10"
+                                            style={{ left: hibisWidth, y: "-50%", scale: thumbScale, boxShadow: thumbShadow }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {/* RIGHT AREA: Typography & Desktop Sliders */}
+                        <div className="flex flex-col justify-center w-full max-w-xl mx-auto xl:mx-0 relative shrink-0 pt-0 sm:pt-4 pb-4 md:pb-8 lg:py-0">
+                            <span className="text-[10px] sm:text-[11px] md:text-sm font-semibold text-brand-accent uppercase tracking-widest mb-1 sm:mb-2 md:mb-4 text-center lg:text-left">
+                                SCROLL TO BLEND
+                            </span>
+                            <h2 className="text-[20px] sm:text-[24px] md:text-[32px] lg:text-6xl font-bold text-gray-900 leading-[1.15] mb-2 sm:mb-4 md:mb-6 tracking-tight text-center lg:text-left">
+                                스크롤하여 당신만의<br className="hidden sm:block" />비율을 완성하세요.
+                            </h2>
+                            <p className="text-brand-text/60 mb-4 sm:mb-6 md:mb-12 text-[12px] sm:text-sm md:text-[15px] lg:text-lg leading-relaxed font-light text-center lg:text-left">
+                                카카오의 깊고 묵직한 베이스에 상큼한 히비스커스가 더해지는 과정을 경험하세요. 휠을 움직일 때마다 환상적인 밸런스가 조율됩니다.
+                            </p>
+
+                            {/* Desktop Dashboard Area - Mobile hides this */}
+                            <div className="hidden lg:flex flex-col gap-10 mb-12 w-full bg-white/60 p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white backdrop-blur-md">
+
+                                {/* Cacao Desktop */}
+                                <div className="relative w-full">
+                                    <div className="flex justify-between items-end mb-3">
+                                        <span className="text-sm font-bold text-brand-text tracking-widest">본연의 카카오</span>
+                                        <motion.span
+                                            className="text-3xl font-extrabold text-[#5D4037] origin-bottom-right"
+                                            style={{ scale: textBouncyScale }}
+                                        >{cacaoText}</motion.span>
+                                    </div>
+                                    <div className="relative h-4 w-full bg-gray-200 rounded-full shadow-inner">
+                                        <motion.div
+                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#8D6E63] to-[#5D4037] rounded-full origin-left overflow-visible"
+                                            style={{ width: cacaoWidth }}
+                                        >
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/20 blur-[2px] rounded-r-full" />
+                                        </motion.div>
+                                        <motion.div
+                                            className="absolute top-1/2 -ml-3.5 w-7 h-7 bg-white rounded-full border-[3px] border-[#5D4037] z-10"
+                                            style={{ left: cacaoWidth, y: "-50%", scale: thumbScale, boxShadow: thumbShadow }}
                                         />
                                     </div>
                                 </div>
 
+                                {/* Hibiscus Desktop */}
+                                <div className="relative w-full">
+                                    <div className="flex justify-between items-end mb-3">
+                                        <span className="text-sm font-bold text-brand-accent tracking-widest">프리미엄 히비스커스</span>
+                                        <motion.span
+                                            className="text-3xl font-extrabold text-brand-accent origin-bottom-right"
+                                            style={{ scale: textBouncyScale }}
+                                        >{hibisText}</motion.span>
+                                    </div>
+                                    <div className="relative h-4 w-full bg-rose-50 rounded-full shadow-inner">
+                                        <motion.div
+                                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#edc5c4] to-[#c89f9e] rounded-full origin-left overflow-visible"
+                                            style={{ width: hibisWidth }}
+                                        >
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-white/30 blur-[2px] rounded-r-full" />
+                                        </motion.div>
+                                        <motion.div
+                                            className="absolute top-1/2 -ml-3.5 w-7 h-7 bg-white rounded-full border-[3px] border-[#c89f9e] z-10"
+                                            style={{ left: hibisWidth, y: "-50%", scale: thumbScale, boxShadow: thumbShadow }}
+                                        />
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Direct Action Button */}
                             <div className="flex justify-center lg:justify-start">
                                 <button
                                     onClick={onStartBlending}
-                                    className="border border-brand-text text-brand-text rounded-full px-8 py-3.5 md:py-4 md:px-10 text-sm md:text-base font-bold hover:bg-brand-text hover:text-white transition-all duration-300 flex items-center gap-3 group"
+                                    className="border border-brand-text text-brand-text rounded-full px-6 md:px-8 lg:px-10 py-2.5 md:py-3.5 lg:py-4 text-[13px] md:text-sm lg:text-base font-bold hover:bg-brand-text hover:text-white transition-all duration-300 flex items-center gap-2 lg:gap-3 group"
                                 >
                                     레시피 자세히 보기
                                     <span className="group-hover:translate-x-1 transition-transform">→</span>
