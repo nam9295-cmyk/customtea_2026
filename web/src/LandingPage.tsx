@@ -148,23 +148,88 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
 
       </main>
 
-      {/* Footer */}
-      <footer className="w-full text-brand-text/50 bg-white px-6 md:px-[120px] py-[80px] flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-t border-brand-text/5">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
-            <Leaf size={18} className="text-brand-accent opacity-80" />
-            <span className="font-serif text-xl tracking-[0.1em] text-brand-text uppercase">Detox Tea</span>
+      {/* ----------------- PRE-FOOTER (Brand Symmetrical Layout) ----------------- */}
+      <section className="w-full bg-[#fdfbf9] min-h-[60vh] flex flex-col items-center justify-center relative py-20">
+        <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-6xl px-8 relative">
+          <div className="md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center justify-center shrink-0 text-black z-10 my-8 md:my-0">
+            <Leaf className="w-24 h-24 md:w-32 md:h-32" strokeWidth={1} />
           </div>
-          <p className="text-sm font-light leading-relaxed max-w-[400px]">
-            자연이 주는 온전한 휴식, 디톡스 티.<br />당신의 일상에 건강한 비움을 선사합니다.
-          </p>
+
+          <div className="flex flex-col md:flex-row w-full justify-between items-center z-0 gap-8 md:gap-0">
+            <div className="w-full md:w-1/2 flex justify-center md:justify-end md:pr-24 lg:pr-32">
+              <span className="text-2xl md:text-3xl font-medium tracking-tight text-gray-900 text-center md:text-right">
+                디톡스 티뿐만 아니라,
+              </span>
+            </div>
+            <div className="w-full md:w-1/2 flex justify-center md:justify-start md:pl-24 lg:pl-32">
+              <span className="text-2xl md:text-3xl font-medium tracking-tight text-gray-900 text-center md:text-left">
+                베리굿의 더 많은 제품을 만나보세요.
+              </span>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col md:text-right gap-2 text-sm font-light">
-          <p>© 2026 Detox Tea Co. All rights reserved.</p>
-          <div className="flex gap-4 md:justify-end">
-            <a href="#" className="hover:text-brand-accent transition-colors">Instagram</a>
-            <a href="#" className="hover:text-brand-accent transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-brand-accent transition-colors">Contact</a>
+        <a
+          href="https://verygood-chocolate.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-20 inline-flex items-center justify-center bg-black text-white px-10 py-4 rounded-full font-medium text-lg hover:bg-gray-800 hover:scale-105 transition-all duration-300"
+        >
+          베리굿 공식몰 방문하기
+        </a>
+      </section>
+
+      {/* ----------------- MAIN FAT FOOTER ----------------- */}
+      <footer className="w-full bg-white border-t border-brand-text/5">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 py-16 md:py-20 lg:py-24">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16 lg:mb-24">
+
+            {/* Column 1: Brand */}
+            <div className="flex flex-col gap-6 lg:pr-8">
+              <span className="font-serif font-bold text-2xl tracking-wider text-brand-text">very goût</span>
+              <p className="text-[13px] md:text-sm text-brand-text/50 font-light leading-relaxed">
+                자연이 주는 온전한 휴식.<br className="hidden md:block" /> 당신의 일상에 건강한 비움을 선사합니다.
+              </p>
+            </div>
+
+            {/* Column 2: Shop */}
+            <div className="flex flex-col gap-6">
+              <h4 className="font-bold text-[10px] md:text-xs tracking-[0.15em] uppercase text-brand-text">Shop</h4>
+              <ul className="flex flex-col gap-3 text-[13px] md:text-sm text-brand-text/50 font-light">
+                <li><a href="#" className="hover:text-brand-text transition-colors">British Black</a></li>
+                <li><a href="#" className="hover:text-brand-text transition-colors">Asian Gold</a></li>
+                <li><a href="#" className="hover:text-brand-text transition-colors">Hibiscus Fruit</a></li>
+                <li><a href="#" className="hover:text-brand-text transition-colors">Minty Chocolat</a></li>
+              </ul>
+            </div>
+
+            {/* Column 3: About */}
+            <div className="flex flex-col gap-6">
+              <h4 className="font-bold text-[10px] md:text-xs tracking-[0.15em] uppercase text-brand-text">About</h4>
+              <ul className="flex flex-col gap-3 text-[13px] md:text-sm text-brand-text/50 font-light">
+                <li><button onClick={() => setShowBrandStory(true)} className="hover:text-brand-text transition-colors text-left">Brand Story</button></li>
+                <li><a href="#" className="hover:text-brand-text transition-colors">Stores <span className="text-[10px] uppercase ml-1 opacity-60">(대구 본점)</span></a></li>
+                <li><a href="#" className="hover:text-brand-text transition-colors">Contact Us</a></li>
+              </ul>
+            </div>
+
+            {/* Column 4: Social & Legal */}
+            <div className="flex flex-col gap-6">
+              <h4 className="font-bold text-[10px] md:text-xs tracking-[0.15em] uppercase text-brand-text">Connect</h4>
+              <ul className="flex flex-col gap-3 text-[13px] md:text-sm text-brand-text/50 font-light">
+                <li><a href="#" className="hover:text-brand-text transition-colors">Instagram <span className="text-[10px] mb-0 ml-1 opacity-60">(@verygood_chocolate)</span></a></li>
+                <li><a href="#" className="hover:text-brand-text transition-colors">KakaoTalk</a></li>
+              </ul>
+            </div>
+
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t border-brand-text/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs text-brand-text/40 font-light">
+            <p>&copy; 2026 Very Good Chocolate Studio. All rights reserved.</p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-brand-text transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-brand-text transition-colors">Terms of Service</a>
+            </div>
           </div>
         </div>
       </footer>
