@@ -1,11 +1,11 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 export interface HeroProps {
-    onStartSurvey: () => void;
-    onOpenBrandStory: () => void;
+    // onStartSurvey: () => void;
+    // onOpenBrandStory: () => void;
 }
 
-export function Hero({ onStartSurvey, onOpenBrandStory }: HeroProps) {
+export function Hero() {
     const { scrollY } = useScroll();
 
     // Text enters the box: slides down INTO the box, shrinks, fades out near end of box
@@ -41,27 +41,17 @@ export function Hero({ onStartSurvey, onOpenBrandStory }: HeroProps) {
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="relative z-10 w-[95%] max-w-6xl mx-auto aspect-video bg-gray-100 rounded-[2.5rem] overflow-hidden shadow-xl flex items-center justify-center group"
+                className="relative z-10 w-[95%] max-w-6xl mx-auto aspect-[4/5] md:aspect-video bg-gray-100 rounded-[2.5rem] overflow-hidden shadow-xl flex items-center justify-center group"
             >
-                <span className="text-gray-400/60 font-medium text-lg tracking-widest select-none uppercase">
-                    Video Placeholder
-                </span>
-
-                {/* Floating CTA Buttons */}
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col sm:flex-row gap-4 z-30 w-full max-w-md justify-center px-4">
-                    <button
-                        onClick={onStartSurvey}
-                        className="bg-[#edc5c4] text-gray-900 px-10 py-4 md:py-5 rounded-full font-bold shadow-xl hover:scale-105 transition-transform duration-300 w-full sm:w-auto text-sm md:text-base"
-                    >
-                        나만의 블렌드 찾기
-                    </button>
-                    <button
-                        onClick={onOpenBrandStory}
-                        className="bg-white/90 backdrop-blur-md text-gray-900 px-10 py-4 md:py-5 rounded-full font-bold shadow-xl hover:scale-105 transition-transform duration-300 w-full sm:w-auto text-sm md:text-base border border-gray-200"
-                    >
-                        브랜드 스토리
-                    </button>
-                </div>
+                {/* Hero Background Video */}
+                <video
+                    src="/video/hero.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                />
             </motion.div>
         </section>
     );

@@ -3,6 +3,8 @@ import { Leaf, Menu } from 'lucide-react';
 import { teaDetails } from './data/teaDetails';
 import TeaDetailModal from './components/TeaDetailModal';
 import { Hero } from './components/Hero';
+import { FeatureSection1 } from './sections/FeatureSection1';
+import { FeatureSection2 } from './sections/FeatureSection2';
 import { motion } from 'framer-motion';
 
 const BrandStorySlider = lazy(() =>
@@ -55,10 +57,26 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
 
       {/* Main Content */}
       <main className="flex flex-col w-full">
-        <Hero
-          onStartSurvey={onStartSurvey}
-          onOpenBrandStory={() => setShowBrandStory(true)}
-        />
+        <Hero />
+
+        <FeatureSection1 onStartSurvey={onStartSurvey} />
+
+        {/* Transition Text Break */}
+        <section className="min-h-[40vh] py-16 px-6 flex items-center justify-center bg-white">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center"
+          >
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
+              내 몸이 원하는 완벽한 밸런스, <br className="hidden md:block" />직접 조율하세요.
+            </h2>
+          </motion.div>
+        </section>
+
+        <FeatureSection2 onStartSurvey={onStartSurvey} />
 
         {/* Signature Base Section */}
         <section className="w-full px-6 md:px-[120px] py-24 bg-brand-text/[0.02]">

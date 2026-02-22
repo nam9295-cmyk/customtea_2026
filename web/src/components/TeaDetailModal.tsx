@@ -6,12 +6,15 @@ import { TeaDetail } from '../data/teaDetails';
 interface TeaDetailModalProps {
     tea: TeaDetail;
     onClose: () => void;
+    isInline?: boolean; // Added to support inline rendering without backdrop
 }
 
-const TeaDetailModal: React.FC<TeaDetailModalProps> = ({ tea, onClose }) => {
+const TeaDetailModal: React.FC<TeaDetailModalProps> = ({ tea, onClose, isInline = false }) => {
     const [canCloseByBackdrop, setCanCloseByBackdrop] = useState(false);
 
     useEffect(() => {
+        if (isInline) return; // Skip scroll locking and key listeners if inline
+
         const originalOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
         const interactiveTimer = window.setTimeout(() => {
@@ -26,7 +29,18 @@ const TeaDetailModal: React.FC<TeaDetailModalProps> = ({ tea, onClose }) => {
             document.body.style.overflow = originalOverflow;
             window.removeEventListener('keydown', handleEscape);
         };
-    }, [onClose]);
+    }, [onClose, isInline]);
+
+    if (isInline) {
+        return (
+            <div className="absolute inset-0 flex items-center justify-center p-2 md:p-4 pointer-events-none">
+                {/* Scale the modal to fit perfectly within the container without cropping. origin-center keeps it centered. */}
+                <div className="w-full max-w-[720px] transform scale-[0.60] sm:scale-[0.7] md:scale-[0.75] lg:scale-[0.85] origin-center rounded-3xl overflow-hidden shadow-sm bg-white">
+                    <TeaPreviewCard tea={tea} compact={false} showChart={true} />
+                </div>
+            </div>
+        );
+    }
 
     return createPortal(
         // Centered modal with internal scrolling for smaller viewports
