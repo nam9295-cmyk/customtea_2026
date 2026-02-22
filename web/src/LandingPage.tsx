@@ -76,7 +76,7 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
           </motion.div>
         </section>
 
-        <FeatureSection2 onStartSurvey={onStartSurvey} />
+        <FeatureSection2 onStartBlending={() => setShowBrandStory(true)} />
 
         {/* Signature Base Section */}
         <section className="w-full px-6 md:px-[120px] py-24 bg-brand-text/[0.02]">

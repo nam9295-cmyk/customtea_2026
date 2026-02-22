@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface FeatureSection2Props {
-    onStartSurvey: () => void;
+    onStartBlending: () => void;
 }
 
-export function FeatureSection2({ onStartSurvey }: FeatureSection2Props) {
+export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
     const [activeIndex, setActiveIndex] = useState(0);
     const teaCards = [
         "/images/british.webp",
@@ -81,7 +81,7 @@ export function FeatureSection2({ onStartSurvey }: FeatureSection2Props) {
                         </p>
                         <div>
                             <button
-                                onClick={onStartSurvey}
+                                onClick={onStartBlending}
                                 className="border-2 border-gray-900 text-gray-900 rounded-full px-8 py-3.5 font-bold hover:bg-gray-900 hover:text-white transition-colors duration-300 flex items-center gap-3 group"
                             >
                                 블렌딩 시작하기
