@@ -1,8 +1,8 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Leaf } from 'lucide-react';
+import { lazy, Suspense, useMemo, useState } from 'react';
+import { Leaf, Menu } from 'lucide-react';
 import { teaDetails } from './data/teaDetails';
 import TeaDetailModal from './components/TeaDetailModal';
-import TeaPreviewCard from './components/TeaPreviewCard';
+import { Hero } from './components/Hero';
 import { motion } from 'framer-motion';
 
 const BrandStorySlider = lazy(() =>
@@ -16,149 +16,49 @@ export interface LandingPageProps {
 
 export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps) {
   const [selectedTeaId, setSelectedTeaId] = useState<string | null>(null);
-  const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
   const [showBrandStory, setShowBrandStory] = useState(false);
-  const activeTea = teaDetails[currentPreviewIndex];
   const selectedTea = useMemo(
     () => teaDetails.find((tea) => tea.id === selectedTeaId) ?? null,
     [selectedTeaId],
   );
 
-  useEffect(() => {
-    let timerId: number | null = null;
-
-    const startAutoRotate = () => {
-      if (timerId !== null) return;
-      timerId = window.setInterval(() => {
-        setCurrentPreviewIndex((prev) => (prev + 1) % teaDetails.length);
-      }, 5000);
-    };
-
-    const stopAutoRotate = () => {
-      if (timerId === null) return;
-      window.clearInterval(timerId);
-      timerId = null;
-    };
-
-    const handleVisibility = () => {
-      if (document.hidden) {
-        stopAutoRotate();
-      } else {
-        startAutoRotate();
-      }
-    };
-
-    startAutoRotate();
-    document.addEventListener('visibilitychange', handleVisibility);
-
-    return () => {
-      stopAutoRotate();
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
-  }, []);
-
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent/30 selection:text-white animate-fade-in relative">
 
-      {/* Navigation Bar */}
-      <nav className="w-full h-[90px] border-b border-brand-text/5 px-6 md:px-[120px] grid grid-cols-3 items-center bg-brand-bg/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
+      {/* Floating Pill Navigation */}
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[92%] md:w-[30%] max-w-3xl bg-white/90 backdrop-blur-md border border-gray-200 rounded-full px-5 py-3 md:px-8 flex items-center justify-between z-50 shadow-sm transition-all duration-300">
 
-        {/* Left Side (Empty spacer to balance center alignment) */}
-        <div></div>
+        {/* Spacer for desktop flex balancing */}
+        <div className="hidden md:block w-8"></div>
 
-        {/* Center Logo */}
-        <a href="/" className="flex items-center justify-center group w-full">
+        {/* Logo (Left on Mobile, Absolute Center on Desktop) */}
+        <a href="/" className="flex items-center md:absolute md:left-1/2 md:-translate-x-1/2">
           {showLogo ? (
             <motion.img
               layoutId="main-logo"
               src="/images/logo.png"
               alt="CUSTOM TEA"
-              className="h-8 md:h-10 w-auto object-contain cursor-pointer"
+              className="h-6 md:h-7 w-auto object-contain cursor-pointer"
               transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1] as [number, number, number, number] }}
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             />
           ) : (
-            <div className="h-8 md:h-10 w-[140px]" /> // Placeholder matching logo width
+            <div className="h-6 md:h-7 w-[100px]" /> // Placeholder matching logo width
           )}
         </a>
 
-        {/* Right CTA (Empty spacer to balance center alignment) */}
-        <div></div>
+        {/* Right Hamburger Icon */}
+        <button className="text-gray-900 hover:text-gray-600 transition-colors p-2">
+          <Menu size={24} />
+        </button>
       </nav>
 
       {/* Main Content */}
       <main className="flex flex-col w-full">
-
-        {/* Hero Section */}
-        <section className="w-full relative min-h-[90vh] flex flex-col justify-center px-6 md:px-[120px] py-[100px] md:py-[180px]">
-          <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-[80px] items-center z-10">
-
-            {/* Hero Text */}
-            <div className="flex flex-col gap-8 md:gap-12 w-full max-w-[600px]">
-              <div className="flex flex-col gap-6">
-                <span className="text-brand-accent text-sm font-sans font-semibold tracking-[0.2em] uppercase">
-                  Personalized Tea Curation
-                </span>
-                <h1 className="font-serif text-[48px] md:text-[68px] lg:text-[76px] font-medium leading-[1.1] text-brand-text break-keep tracking-tight">
-                  당신만의 완벽한 휴식,<br className="hidden sm:block" />
-                  한 잔의 차에서 시작됩니다.
-                </h1>
-                <p className="text-brand-text/70 text-lg md:text-xl leading-[1.8] font-light break-keep mt-2">
-                  취향과 라이프스타일 데이터에 기반한 정교한 분석으로<br className="hidden sm:block" />일상의 균형을 되찾아주는 프리미엄 디톡스 솔루션을 제안합니다.
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-5 pt-4">
-                <button
-                  onClick={onStartSurvey}
-                  className="bg-brand-accent text-brand-text px-10 py-5 rounded-sm text-[16px] font-medium hover:bg-[#e4b5b4] shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  나만의 블렌드 찾기
-                </button>
-                <button
-                  onClick={() => setShowBrandStory(true)}
-                  className="bg-brand-bg text-brand-text px-10 py-5 rounded-sm text-[16px] font-medium hover:bg-brand-text/5 transition-colors duration-300 shadow-sm flex items-center justify-center gap-2"
-                >
-                  브랜드 스토리 <ArrowRight size={18} />
-                </button>
-              </div>
-            </div>
-
-            {/* Hero Preview Viewer */}
-            <div className="w-full flex justify-center lg:justify-end">
-              {/* Dot indicators & Viewer Container */}
-              <div className="w-full max-w-[480px] lg:max-w-[540px] flex flex-col gap-6 relative">
-
-                {/* Decorative glowing backdrop that pulses slightly */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-brand-accent/20 blur-[60px] rounded-full animate-pulse z-0 pointer-events-none"></div>
-
-                <div className="relative w-full z-10">
-                  <div
-                    key={activeTea.id}
-                    className="relative animate-fade-in transition-all duration-700 ease-out"
-                  >
-                    <TeaPreviewCard tea={activeTea} compact={true} showChart={false} />
-                  </div>
-                </div>
-                {/* Dot indicators */}
-                <div className="flex justify-center gap-2.5 pt-2 z-10">
-                  {teaDetails.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentPreviewIndex(idx)}
-                      className={`h-1.5 rounded-full transition-all duration-700 ease-out ${idx === currentPreviewIndex
-                        ? 'bg-brand-accent w-8'
-                        : 'bg-brand-text/15 hover:bg-brand-text/30 w-1.5'
-                        }`}
-                      aria-label={`View ${teaDetails[idx].name}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
+        <Hero
+          onStartSurvey={onStartSurvey}
+          onOpenBrandStory={() => setShowBrandStory(true)}
+        />
 
         {/* Signature Base Section */}
         <section className="w-full px-6 md:px-[120px] py-24 bg-brand-text/[0.02]">
