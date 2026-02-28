@@ -28,13 +28,14 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
     const textBouncyScale = useTransform(velocityMagnitude, [0, 1], [1, 1.06]);
 
     // 1. Right Box - Sliders Mapping (using smoothProgress)
-    const cacaoWidth = useTransform(smoothProgress, [0, 1], ["0%", "55%"]);
-    const cacaoNum = useTransform(smoothProgress, [0, 1], [0, 55]);
-    const cacaoText = useTransform(cacaoNum, (v) => `${Math.round(v)}%`);
+    const cacaoNum = useTransform(smoothProgress, [0, 1], [35, 65]);
+    const cacaoRounded = useTransform(cacaoNum, (v) => Math.round(v));
+    const cacaoText = useTransform(cacaoRounded, (v) => `${v}%`);
+    const cacaoWidth = useTransform(cacaoRounded, (v) => `${v}%`);
 
-    const hibisWidth = useTransform(smoothProgress, [0, 1], ["0%", "81%"]);
-    const hibisNum = useTransform(smoothProgress, [0, 1], [0, 81]);
+    const hibisNum = useTransform(cacaoRounded, (v) => 100 - v);
     const hibisText = useTransform(hibisNum, (v) => `${Math.round(v)}%`);
+    const hibisWidth = useTransform(hibisNum, (v) => `${Math.round(v)}%`);
 
     // 2. Left Box - Top Liquid Mapping
     const liquidColor = useTransform(smoothProgress, [0, 0.5, 1], ["rgba(93, 64, 55, 0.05)", "rgba(180, 60, 60, 0.4)", "rgba(255, 20, 147, 0.65)"]);

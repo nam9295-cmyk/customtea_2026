@@ -62,7 +62,76 @@ const TEA_DATA_ARRAY = Object.values(TEA_PRODUCTS);
 const STAT_KEYS = Object.keys(STAT_LABELS) as Array<keyof typeof STAT_LABELS>;
 const FLAVOR_KEYS = Object.keys(FLAVOR_LABELS) as Array<keyof typeof FLAVOR_LABELS>;
 
-const createInitialBlendValues = () => ({ slot1: 30, slot2: 20, slot3: 50 });
+type BlendValues = { slot1: number; slot2: number; slot3: number };
+type SlotKey = keyof BlendValues;
+
+const SLOT_KEYS: SlotKey[] = ['slot1', 'slot2', 'slot3'];
+
+const clampPercent = (value: number): number => {
+    if (value < 0) return 0;
+    if (value > 100) return 100;
+    return value;
+};
+
+const createInitialBlendValues = (): BlendValues => ({ slot1: 30, slot2: 20, slot3: 50 });
+
+const normalizeBlendValues = (input: BlendValues): BlendValues => {
+    const raw = SLOT_KEYS.map((key) => clampPercent(Math.round(input[key])));
+    const total = raw[0] + raw[1] + raw[2];
+
+    if (total === 100) {
+        return { slot1: raw[0], slot2: raw[1], slot3: raw[2] };
+    }
+
+    if (total === 0) {
+        return { slot1: 34, slot2: 33, slot3: 33 };
+    }
+
+    const scaled = raw.map((value) => (value / total) * 100);
+    const base = scaled.map((value) => Math.floor(value));
+    let remainder = 100 - (base[0] + base[1] + base[2]);
+
+    const fractions = scaled
+        .map((value, index) => ({ index, fraction: value - base[index] }))
+        .sort((a, b) => b.fraction - a.fraction);
+
+    for (let i = 0; i < fractions.length && remainder > 0; i += 1) {
+        base[fractions[i].index] += 1;
+        remainder -= 1;
+    }
+
+    return { slot1: base[0], slot2: base[1], slot3: base[2] };
+};
+
+const redistributeBlendValues = (current: BlendValues, changedKey: SlotKey, nextValue: number): BlendValues => {
+    const clamped = clampPercent(Math.round(nextValue));
+    const remaining = 100 - clamped;
+    const otherKeys = SLOT_KEYS.filter((key) => key !== changedKey);
+    const firstKey = otherKeys[0];
+    const secondKey = otherKeys[1];
+    const otherSum = current[firstKey] + current[secondKey];
+
+    if (otherSum <= 0) {
+        const firstShare = Math.floor(remaining / 2);
+        const secondShare = remaining - firstShare;
+        return {
+            ...current,
+            [changedKey]: clamped,
+            [firstKey]: firstShare,
+            [secondKey]: secondShare,
+        };
+    }
+
+    const firstShare = Math.round((remaining * current[firstKey]) / otherSum);
+    const secondShare = remaining - firstShare;
+
+    return {
+        ...current,
+        [changedKey]: clamped,
+        [firstKey]: firstShare,
+        [secondKey]: secondShare,
+    };
+};
 
 interface SliderProps {
     label: string;
@@ -80,8 +149,9 @@ function SliderComponent({ label, value, onChange, emoji }: SliderProps) {
                 type="range"
                 min="0"
                 max="100"
+                step="1"
                 value={value}
-                onInput={(e) => onChange(Number((e.target as HTMLInputElement).value))}
+                onChange={(e) => onChange(Number((e.target as HTMLInputElement).value))}
                 className="flex-1 h-1.5 bg-gray-200 rounded-full appearance-none outline-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-brand-accent [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md"
             />
             <span className="px-3 py-1 bg-white border border-gray-100 rounded-full text-xs font-bold w-14 text-center text-brand-text shadow-sm flex-shrink-0">
@@ -97,7 +167,7 @@ interface BrandStorySliderProps {
 
 export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-    const [values, setValues] = useState(createInitialBlendValues);
+    const [values, setValues] = useState<BlendValues>(() => normalizeBlendValues(createInitialBlendValues()));
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [visible, setVisible] = useState(false);
     const [canCloseByBackdrop, setCanCloseByBackdrop] = useState(false);
@@ -128,6 +198,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
     };
 
     const currentTea = TEA_DATA_ARRAY[currentSlideIndex];
+    const blendTotal = values.slot1 + values.slot2 + values.slot3;
     const ingredientKeys = useMemo(
         () => Object.keys(currentTea.ingredients) as Array<keyof typeof currentTea.ingredients>,
         [currentTea],
@@ -151,6 +222,16 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
             slideTimerRef.current = null;
         }, 400);
     };
+
+    const handleBlendValueChange = (slotKey: SlotKey, nextValue: number) => {
+        setValues((prev) => normalizeBlendValues(redistributeBlendValues(prev, slotKey, nextValue)));
+    };
+
+    useEffect(() => {
+        if (blendTotal !== 100) {
+            setValues((prev) => normalizeBlendValues(prev));
+        }
+    }, [blendTotal]);
 
     const liquidColor = useMemo(() => {
         const total = values.slot1 + values.slot2 + values.slot3;
@@ -337,18 +418,19 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
                                 <div className="flex flex-col w-full bg-white/80 border border-gray-100 p-5 md:p-7 rounded-2xl shadow-sm backdrop-blur-sm">
                                     <div className="flex items-center gap-3 mb-5 border-b border-brand-text/10 pb-4">
                                         <span className="text-brand-text font-serif text-base tracking-wide">Blending Control</span>
+                                        <span className="text-[11px] uppercase tracking-[0.12em] text-brand-text/45">total {blendTotal}%</span>
                                         <div className="ml-auto w-7 h-7 rounded-full shadow-inner border border-white/50 transition-colors duration-500" style={{ backgroundColor: liquidColor }} />
                                     </div>
                                     <div className="flex flex-col gap-4">
                                         {ingredientKeys.map((key, index) => {
                                             const ing = currentTea.ingredients[key];
-                                            const slotKey = `slot${index + 1}` as keyof typeof values;
+                                            const slotKey = `slot${index + 1}` as SlotKey;
                                             return (
                                                 <SliderComponent
                                                     key={key}
                                                     label={ing.name}
                                                     value={values[slotKey]}
-                                                    onChange={(v) => setValues(prev => ({ ...prev, [slotKey]: v }))}
+                                                    onChange={(v) => handleBlendValueChange(slotKey, v)}
                                                     emoji={ing.emoji}
                                                 />
                                             );
