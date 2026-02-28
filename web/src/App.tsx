@@ -3,7 +3,7 @@ import { LandingPage } from './LandingPage';
 import { IntroLoader } from './components/IntroLoader';
 import { AnimatePresence } from 'framer-motion';
 import type { AnswerValue } from './components/QuestionForm';
-import { calculateBlendRatio, BlendResult } from './engine/calculator';
+import { calculateRecommendation, RecommendationResult } from './engine/calculator';
 
 const QuestionForm = lazy(() => import('./components/QuestionForm'));
 const ResultPage = lazy(() => import('./components/ResultPage'));
@@ -16,7 +16,8 @@ function ViewFallback() {
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewState>('landing');
-  const [blendResult, setBlendResult] = useState<BlendResult[] | null>(null);
+  const [recommendationResult, setRecommendationResult] = useState<RecommendationResult | null>(null);
+  const [surveyAnswers, setSurveyAnswers] = useState<Record<string, AnswerValue> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleStartSurvey = () => {
@@ -26,11 +27,13 @@ function App() {
 
   const handleCloseSurvey = () => {
     setCurrentView('landing');
+    setSurveyAnswers(null);
   };
 
   const handleSurveyComplete = (answers: Record<string, AnswerValue>) => {
-    const results = calculateBlendRatio(answers);
-    setBlendResult(results);
+    const result = calculateRecommendation(answers);
+    setRecommendationResult(result);
+    setSurveyAnswers(answers);
     setCurrentView('result');
     window.scrollTo(0, 0);
   };
@@ -61,9 +64,13 @@ function App() {
         </Suspense>
       )}
 
-      {currentView === 'result' && blendResult && (
+      {currentView === 'result' && recommendationResult && surveyAnswers && (
         <Suspense fallback={<ViewFallback />}>
-          <ResultPage blendResult={blendResult} onRestart={handleCloseSurvey} />
+          <ResultPage
+            recommendationResult={recommendationResult}
+            answers={surveyAnswers}
+            onRestart={handleCloseSurvey}
+          />
         </Suspense>
       )}
     </>

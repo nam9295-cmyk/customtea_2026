@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { questions } from '../data/questions';
 
 export type AnswerValue = string | string[];
@@ -7,6 +7,26 @@ interface QuestionFormProps {
     onClose: () => void;
     onComplete: (answers: Record<string, AnswerValue>) => void;
 }
+
+type MiniAxisKey = 'refreshing' | 'classic' | 'dessertLike' | 'balanced';
+
+const optionSignalHint: Record<string, string> = {
+    refreshing: '상쾌함 선호가 반영됩니다.',
+    classic: '클래식 성향이 반영됩니다.',
+    balanced: '균형감 선호가 반영됩니다.',
+    desserty: '디저트형 풍미 선호가 반영됩니다.',
+    adventurous: '새로운 스타일 탐색 성향이 반영됩니다.',
+    bold: '강한 개성 선호가 반영됩니다.',
+    ritual: '차분한 루틴 성향이 반영됩니다.',
+    casual: '가볍게 즐기는 성향이 반영됩니다.',
+};
+
+const miniAxisConfig: Record<MiniAxisKey, { label: string }> = {
+    refreshing: { label: '상쾌함' },
+    classic: { label: '클래식함' },
+    dessertLike: { label: '디저트감' },
+    balanced: { label: '균형감' },
+};
 
 const QuestionForm: React.FC<QuestionFormProps> = ({ onClose, onComplete }) => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -20,6 +40,58 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ onClose, onComplete }) => {
     // For multiple choice, it must be an array with length > 0.
     const currentAnswer = answers[currentQuestion.id];
     const isAnswered = currentAnswer !== undefined && (Array.isArray(currentAnswer) ? currentAnswer.length > 0 : true);
+
+    const getOptionHint = useCallback((optionValue: string) => {
+        const option = currentQuestion.options.find((item) => item.value === optionValue);
+        if (!option) return '현재 질문의 취향 분석에 반영됩니다.';
+
+        const strongestSignal = Object.entries(option.profileSignals)
+            .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0) || a[0].localeCompare(b[0]))[0]?.[0];
+
+        return strongestSignal
+            ? optionSignalHint[strongestSignal] || '현재 질문의 취향 분석에 반영됩니다.'
+            : '현재 질문의 취향 분석에 반영됩니다.';
+    }, [currentQuestion.options]);
+
+    const miniAxisScores = useMemo(() => {
+        const raw: Record<MiniAxisKey, number> = {
+            refreshing: 0,
+            classic: 0,
+            dessertLike: 0,
+            balanced: 0,
+        };
+
+        let selectedCount = 0;
+
+        questions.forEach((question) => {
+            const value = answers[question.id];
+            if (!value) return;
+
+            const values = Array.isArray(value) ? value : [value];
+            values.forEach((selected) => {
+                const option = question.options.find((item) => item.value === selected);
+                if (!option) return;
+                selectedCount += 1;
+
+                raw.refreshing += option.profileSignals.refreshing || 0;
+                raw.classic += option.profileSignals.classic || 0;
+                raw.balanced += option.profileSignals.balanced || 0;
+                raw.dessertLike += option.profileSignals.desserty || 0;
+            });
+        });
+
+        const base = Math.max(1, selectedCount * 2);
+        return (Object.keys(raw) as MiniAxisKey[]).reduce<Record<MiniAxisKey, number>>((acc, key) => {
+            const percent = Math.max(0, Math.min(100, Math.round((raw[key] / base) * 100)));
+            acc[key] = raw[key] > 0 ? Math.max(10, percent) : 0;
+            return acc;
+        }, {
+            refreshing: 0,
+            classic: 0,
+            dessertLike: 0,
+            balanced: 0,
+        });
+    }, [answers]);
 
     const handleOptionSelect = useCallback((optionValue: string) => {
         const questionId = currentQuestion.id;
@@ -78,6 +150,28 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ onClose, onComplete }) => {
                             style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
                         />
                     </div>
+
+                    <div className="mt-4 rounded-xl border border-brand-text/10 bg-[#fcf8f6] px-4 py-3">
+                        <p className="font-sans text-[10px] md:text-[11px] font-bold tracking-[0.12em] text-brand-text/45 uppercase mb-2">
+                            분석 진행 상태
+                        </p>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                            {(Object.keys(miniAxisConfig) as MiniAxisKey[]).map((axisKey) => (
+                                <div key={axisKey} className="space-y-1">
+                                    <div className="flex items-center justify-between text-[11px] md:text-[12px] font-sans text-brand-text/65">
+                                        <span>{miniAxisConfig[axisKey].label}</span>
+                                        <span>{miniAxisScores[axisKey]}%</span>
+                                    </div>
+                                    <div className="h-[3px] rounded-full bg-brand-text/10 overflow-hidden">
+                                        <div
+                                            className="h-full bg-brand-accent/70 transition-all duration-500"
+                                            style={{ width: `${miniAxisScores[axisKey]}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Question Content */}
@@ -134,6 +228,12 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ onClose, onComplete }) => {
                                         `}>
                                             {option.label}
                                         </h4>
+                                        <p className={`
+                                            mt-2 font-sans text-[12px] md:text-[13px] leading-relaxed transition-colors duration-300
+                                            ${isSelected ? 'text-brand-accent/80' : 'text-brand-text/45'}
+                                        `}>
+                                            {getOptionHint(option.value)}
+                                        </p>
                                     </button>
                                 );
                             })}
