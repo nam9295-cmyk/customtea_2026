@@ -64,8 +64,97 @@ const FLAVOR_KEYS = Object.keys(FLAVOR_LABELS) as Array<keyof typeof FLAVOR_LABE
 
 type BlendValues = { slot1: number; slot2: number; slot3: number };
 type SlotKey = keyof BlendValues;
+type StatKey = keyof typeof STAT_LABELS;
+type FlavorKey = keyof typeof FLAVOR_LABELS;
+
+type BlendArchetypeId = 'classicFocus' | 'balancedDaily' | 'fruityRefresh' | 'coolDessert' | 'softExoticBalance';
+
+interface BlendArchetypeMeta {
+    name: string;
+    oneLiner: string;
+}
+
+interface SignatureProfile {
+    id: keyof typeof TEA_PRODUCTS;
+    name: string;
+    archetypeId: BlendArchetypeId;
+    stats: Record<StatKey, number>;
+    flavor: Record<FlavorKey, number>;
+}
+
+interface SimilarityResult {
+    id: keyof typeof TEA_PRODUCTS;
+    name: string;
+    similarity: number;
+    archetypeId: BlendArchetypeId;
+}
+
+interface BlendReading {
+    archetype: BlendArchetypeMeta;
+    summary: string;
+    features: string[];
+    moments: string[];
+    primaryMatch: SimilarityResult;
+    secondaryMatch: SimilarityResult;
+}
 
 const SLOT_KEYS: SlotKey[] = ['slot1', 'slot2', 'slot3'];
+const ANALYSIS_SETTLE_DELAY_MS = 160;
+const ANALYSIS_TEXT_FADE_MS = 170;
+
+const BLEND_ARCHETYPE_META: Record<BlendArchetypeId, BlendArchetypeMeta> = {
+    classicFocus: {
+        name: '클래식 포커스형',
+        oneLiner: '단정한 구조감과 집중 리듬이 또렷한 타입입니다.',
+    },
+    balancedDaily: {
+        name: '밸런스 데일리형',
+        oneLiner: '과하지 않게 이어지는 균형감이 강점인 타입입니다.',
+    },
+    fruityRefresh: {
+        name: '프루티 리프레시형',
+        oneLiner: '밝은 전환감과 산뜻한 인상이 중심이 되는 타입입니다.',
+    },
+    coolDessert: {
+        name: '쿨 디저트형',
+        oneLiner: '만족감 있는 여운과 상쾌한 대비가 공존하는 타입입니다.',
+    },
+    softExoticBalance: {
+        name: '소프트 이국 밸런스형',
+        oneLiner: '은은한 이국성과 부드러운 레이어가 자연스러운 타입입니다.',
+    },
+};
+
+const SIGNATURE_PROFILES: SignatureProfile[] = [
+    {
+        id: 'british',
+        name: '브리티쉬 블랙',
+        archetypeId: 'classicFocus',
+        stats: { structure: 8.8, refresh: 3.8, balance: 6.8, mood: 7.8, finish: 8.6 },
+        flavor: { sweet: 2.1, bitter: 6.5, nutty: 7.8, body: 8.6, aroma: 6.1 },
+    },
+    {
+        id: 'asian',
+        name: '아시안 골드',
+        archetypeId: 'balancedDaily',
+        stats: { structure: 6.3, refresh: 6.9, balance: 8.7, mood: 6.8, finish: 7.2 },
+        flavor: { sweet: 2.4, bitter: 4.1, nutty: 5.8, body: 5.6, aroma: 8.8 },
+    },
+    {
+        id: 'hibiscus',
+        name: '히비스커스 프룻',
+        archetypeId: 'fruityRefresh',
+        stats: { structure: 4.1, refresh: 9.3, balance: 6.6, mood: 7.4, finish: 6.2 },
+        flavor: { sweet: 4.8, bitter: 2.0, nutty: 0.6, body: 3.0, aroma: 8.9 },
+    },
+    {
+        id: 'minty',
+        name: '민티 쇼콜라',
+        archetypeId: 'coolDessert',
+        stats: { structure: 7.1, refresh: 8.2, balance: 7.4, mood: 7.3, finish: 8.4 },
+        flavor: { sweet: 3.3, bitter: 4.6, nutty: 5.4, body: 6.2, aroma: 8.2 },
+    },
+];
 
 const clampPercent = (value: number): number => {
     if (value < 0) return 0;
@@ -101,6 +190,19 @@ const normalizeBlendValues = (input: BlendValues): BlendValues => {
     }
 
     return { slot1: base[0], slot2: base[1], slot3: base[2] };
+};
+
+const computeSimilarity = (
+    statValues: Record<StatKey, number>,
+    flavorValues: Record<FlavorKey, number>,
+    signature: SignatureProfile,
+): number => {
+    const statDistance = STAT_KEYS.reduce((sum, key) => sum + ((statValues[key] - signature.stats[key]) ** 2), 0);
+    const flavorDistance = FLAVOR_KEYS.reduce((sum, key) => sum + ((flavorValues[key] - signature.flavor[key]) ** 2), 0);
+    const totalDistance = Math.sqrt(statDistance + flavorDistance);
+    const maxDistance = 10 * Math.sqrt(STAT_KEYS.length + FLAVOR_KEYS.length);
+    const normalized = maxDistance > 0 ? totalDistance / maxDistance : 0;
+    return Math.max(0, Math.min(100, Math.round((1 - normalized) * 100)));
 };
 
 const redistributeBlendValues = (current: BlendValues, changedKey: SlotKey, nextValue: number): BlendValues => {
@@ -171,7 +273,14 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [visible, setVisible] = useState(false);
     const [canCloseByBackdrop, setCanCloseByBackdrop] = useState(false);
+    const [displayedBlendReading, setDisplayedBlendReading] = useState<BlendReading | null>(null);
+    const [analysisTextVisible, setAnalysisTextVisible] = useState(true);
     const slideTimerRef = useRef<number | null>(null);
+    const analysisSettleTimerRef = useRef<number | null>(null);
+    const analysisSwapTimerRef = useRef<number | null>(null);
+    const analysisEnterFrameRef = useRef<number | null>(null);
+    const analysisVisibleRef = useRef(true);
+    const appliedBlendReadingKeyRef = useRef('');
 
     // Trigger the entrance animation on mount
     useEffect(() => {
@@ -185,6 +294,18 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
             if (slideTimerRef.current) {
                 window.clearTimeout(slideTimerRef.current);
                 slideTimerRef.current = null;
+            }
+            if (analysisSettleTimerRef.current) {
+                window.clearTimeout(analysisSettleTimerRef.current);
+                analysisSettleTimerRef.current = null;
+            }
+            if (analysisSwapTimerRef.current) {
+                window.clearTimeout(analysisSwapTimerRef.current);
+                analysisSwapTimerRef.current = null;
+            }
+            if (analysisEnterFrameRef.current) {
+                window.cancelAnimationFrame(analysisEnterFrameRef.current);
+                analysisEnterFrameRef.current = null;
             }
             cancelAnimationFrame(t);
             window.clearTimeout(interactiveTimer);
@@ -292,6 +413,181 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
             return { name: FLAVOR_LABELS[flavorKey as keyof typeof FLAVOR_LABELS], value: total > 0 ? Math.round((weightedSum / total) * 10) / 10 : 0 };
         });
     }, [currentTea, ingredientKeys, values]);
+
+    const statScoreByKey = useMemo(() => {
+        return STAT_KEYS.reduce<Record<StatKey, number>>((acc, key, index) => {
+            acc[key] = profileData[index]?.value || 0;
+            return acc;
+        }, {} as Record<StatKey, number>);
+    }, [profileData]);
+
+    const flavorScoreByKey = useMemo(() => {
+        return FLAVOR_KEYS.reduce<Record<FlavorKey, number>>((acc, key, index) => {
+            acc[key] = flavorData[index]?.value || 0;
+            return acc;
+        }, {} as Record<FlavorKey, number>);
+    }, [flavorData]);
+
+    const blendReading = useMemo<BlendReading>(() => {
+        const archetypeScoreBoard: Array<{ id: BlendArchetypeId; score: number }> = [
+            {
+                id: 'classicFocus',
+                score:
+                    statScoreByKey.structure * 1.25 +
+                    statScoreByKey.finish * 1.05 +
+                    flavorScoreByKey.body * 1.1 +
+                    flavorScoreByKey.bitter * 0.55 -
+                    statScoreByKey.refresh * 0.35,
+            },
+            {
+                id: 'balancedDaily',
+                score:
+                    statScoreByKey.balance * 1.35 +
+                    statScoreByKey.finish * 0.7 +
+                    statScoreByKey.mood * 0.9 +
+                    flavorScoreByKey.body * 0.5,
+            },
+            {
+                id: 'fruityRefresh',
+                score:
+                    statScoreByKey.refresh * 1.45 +
+                    statScoreByKey.mood * 0.8 +
+                    flavorScoreByKey.aroma * 1.15 +
+                    flavorScoreByKey.sweet * 0.55 -
+                    flavorScoreByKey.body * 0.25,
+            },
+            {
+                id: 'coolDessert',
+                score:
+                    statScoreByKey.finish * 0.95 +
+                    statScoreByKey.refresh * 0.7 +
+                    flavorScoreByKey.nutty * 1.15 +
+                    flavorScoreByKey.sweet * 0.8 +
+                    flavorScoreByKey.body * 0.5,
+            },
+            {
+                id: 'softExoticBalance',
+                score:
+                    statScoreByKey.balance * 1.2 +
+                    flavorScoreByKey.aroma * 1.0 +
+                    flavorScoreByKey.bitter * 0.45 +
+                    statScoreByKey.finish * 0.6 +
+                    statScoreByKey.structure * 0.35,
+            },
+        ];
+
+        archetypeScoreBoard.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+        const currentArchetype = BLEND_ARCHETYPE_META[archetypeScoreBoard[0].id];
+
+        const similarities: SimilarityResult[] = SIGNATURE_PROFILES.map((signature) => ({
+            id: signature.id,
+            name: signature.name,
+            similarity: computeSimilarity(statScoreByKey, flavorScoreByKey, signature),
+            archetypeId: signature.archetypeId,
+        })).sort((a, b) => b.similarity - a.similarity || a.name.localeCompare(b.name));
+
+        const primaryMatch = similarities[0];
+        const secondaryMatch = similarities[1];
+
+        const featureCandidates: Array<{ score: number; text: string }> = [
+            { score: statScoreByKey.structure, text: '구조감이 또렷해 블렌드의 중심이 단정하게 유지됩니다.' },
+            { score: statScoreByKey.refresh, text: '리프레시 결이 선명해 무드를 환기하기 좋은 흐름입니다.' },
+            { score: statScoreByKey.balance, text: '풍미 밸런스가 안정적이라 데일리로 이어가기 편안합니다.' },
+            { score: statScoreByKey.finish, text: '마무리 여운이 깔끔하게 남아 다음 한 모금까지 자연스럽게 이어집니다.' },
+            { score: flavorScoreByKey.body, text: '바디감이 충분해 얇지 않고 밀도 있는 인상을 남깁니다.' },
+            { score: flavorScoreByKey.aroma, text: '향의 레이어가 살아 있어 잔향까지 세련된 인상을 만듭니다.' },
+            { score: flavorScoreByKey.nutty + flavorScoreByKey.sweet, text: '고소함과 단맛의 결이 맞물려 부드러운 만족감을 전합니다.' },
+        ];
+
+        const features = featureCandidates
+            .sort((a, b) => b.score - a.score || a.text.localeCompare(b.text))
+            .slice(0, 3)
+            .map((item) => item.text);
+
+        const momentCandidates: Array<{ score: number; label: string }> = [
+            { score: statScoreByKey.refresh + flavorScoreByKey.aroma, label: '오후 리프레시' },
+            { score: statScoreByKey.finish + statScoreByKey.balance, label: '식후 전환' },
+            { score: statScoreByKey.mood + flavorScoreByKey.body, label: '차분한 작업 시간' },
+            { score: statScoreByKey.refresh + statScoreByKey.balance, label: '아이스 티 타임' },
+            { score: flavorScoreByKey.nutty + flavorScoreByKey.sweet, label: '디저트 무드 대체' },
+            { score: statScoreByKey.balance + statScoreByKey.structure, label: '데일리 루틴' },
+        ];
+
+        const moments = momentCandidates
+            .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
+            .slice(0, 4)
+            .map((item) => item.label);
+
+        const summary = `${primaryMatch.name}의 결을 가장 가깝게 닮았고, ${secondaryMatch.name}의 포인트가 보조로 얹히는 분석형 블렌드입니다.`;
+
+        return {
+            archetype: currentArchetype,
+            summary,
+            features,
+            moments,
+            primaryMatch,
+            secondaryMatch,
+        };
+    }, [flavorScoreByKey, statScoreByKey]);
+
+    const blendReadingKey = useMemo(
+        () => [
+            blendReading.archetype.name,
+            blendReading.summary,
+            blendReading.features.join('|'),
+            blendReading.primaryMatch.id,
+            blendReading.primaryMatch.similarity,
+            blendReading.secondaryMatch.id,
+            blendReading.secondaryMatch.similarity,
+            blendReading.moments.join('|'),
+        ].join('::'),
+        [blendReading],
+    );
+
+    useEffect(() => {
+        if (!displayedBlendReading) {
+            appliedBlendReadingKeyRef.current = blendReadingKey;
+            setDisplayedBlendReading(blendReading);
+            analysisVisibleRef.current = true;
+            setAnalysisTextVisible(true);
+            return;
+        }
+
+        if (appliedBlendReadingKeyRef.current === blendReadingKey) {
+            return;
+        }
+
+        if (analysisSettleTimerRef.current) {
+            window.clearTimeout(analysisSettleTimerRef.current);
+            analysisSettleTimerRef.current = null;
+        }
+        if (analysisSwapTimerRef.current) {
+            window.clearTimeout(analysisSwapTimerRef.current);
+            analysisSwapTimerRef.current = null;
+        }
+        if (analysisEnterFrameRef.current) {
+            window.cancelAnimationFrame(analysisEnterFrameRef.current);
+            analysisEnterFrameRef.current = null;
+        }
+
+        analysisSettleTimerRef.current = window.setTimeout(() => {
+            if (analysisVisibleRef.current) {
+                analysisVisibleRef.current = false;
+                setAnalysisTextVisible(false);
+            }
+
+            analysisSwapTimerRef.current = window.setTimeout(() => {
+                setDisplayedBlendReading(blendReading);
+                appliedBlendReadingKeyRef.current = blendReadingKey;
+                analysisEnterFrameRef.current = window.requestAnimationFrame(() => {
+                    analysisVisibleRef.current = true;
+                    setAnalysisTextVisible(true);
+                });
+            }, ANALYSIS_TEXT_FADE_MS);
+        }, ANALYSIS_SETTLE_DELAY_MS);
+    }, [blendReading, blendReadingKey, displayedBlendReading]);
+
+    const readingToRender = displayedBlendReading ?? blendReading;
 
     return createPortal(
         /* ── Layer 1: Full-screen overlay backdrop ── */
@@ -435,6 +731,61 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
                                                 />
                                             );
                                         })}
+                                    </div>
+                                </div>
+
+                                <div className="w-full rounded-2xl border border-brand-text/10 bg-[#fcf8f6] p-5 md:p-6 space-y-4">
+                                    <div
+                                        className={`space-y-4 transform-gpu will-change-transform transition-opacity transition-transform ease-[cubic-bezier(0.22,1,0.36,1)] ${analysisTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0.5'}`}
+                                        style={{ transitionDuration: `${ANALYSIS_TEXT_FADE_MS}ms` }}
+                                    >
+                                    <div className="flex items-center justify-between gap-3 border-b border-brand-text/10 pb-3">
+                                        <div>
+                                            <p className="text-[11px] font-sans font-bold tracking-[0.16em] uppercase text-brand-text/45">Current Blend Analysis</p>
+                                            <p className="font-serif text-[18px] text-brand-text mt-1">{readingToRender.archetype.name}</p>
+                                        </div>
+                                        <span className="rounded-full border border-brand-text/15 px-3 py-1 text-[11px] font-semibold tracking-wide text-brand-text/65 bg-white/80">
+                                            Live Reading
+                                        </span>
+                                    </div>
+
+                                    <p className="text-[14px] leading-relaxed text-brand-text/75">{readingToRender.archetype.oneLiner}</p>
+                                    <p className="text-[14px] leading-relaxed text-brand-text/75">{readingToRender.summary}</p>
+
+                                    <div className="space-y-2">
+                                        {readingToRender.features.map((feature, index) => (
+                                            <p key={`${feature}-${index}`} className="text-[13px] leading-relaxed text-brand-text/70">
+                                                {index + 1}. {feature}
+                                            </p>
+                                        ))}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div className="rounded-xl border border-brand-text/10 bg-white/85 p-3.5">
+                                            <p className="text-[10px] uppercase tracking-[0.14em] text-brand-text/45 mb-1">Closest Signature</p>
+                                            <p className="font-serif text-[18px] text-brand-text">{readingToRender.primaryMatch.name}</p>
+                                            <p className="text-[12px] text-brand-accent font-semibold mt-1">Similarity {readingToRender.primaryMatch.similarity}%</p>
+                                        </div>
+                                        <div className="rounded-xl border border-brand-text/10 bg-white/85 p-3.5">
+                                            <p className="text-[10px] uppercase tracking-[0.14em] text-brand-text/45 mb-1">Second Match</p>
+                                            <p className="font-serif text-[18px] text-brand-text">{readingToRender.secondaryMatch.name}</p>
+                                            <p className="text-[12px] text-brand-text/65 font-semibold mt-1">Similarity {readingToRender.secondaryMatch.similarity}%</p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-[0.14em] text-brand-text/45 mb-2">Best Moments</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {readingToRender.moments.map((moment) => (
+                                                <span
+                                                    key={moment}
+                                                    className="inline-flex items-center rounded-full border border-brand-text/12 bg-white/90 px-3 py-1 text-[12px] font-medium text-brand-text/70"
+                                                >
+                                                    {moment}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
