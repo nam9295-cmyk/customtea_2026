@@ -42,10 +42,10 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
     // 3. Left Box - Bottom Radar Chart Polygon Mapping
     const radarPoints = useTransform(smoothProgress, (v) => {
         const relaxation = 20 + v * 40;
-        const immunity = 20 + v * 60;
+        const refresh = 20 + v * 60;
         const digestion = 20 + v * 70;
         const energy = 20 + v * 30;
-        const respiratory = 20 + v * 50;
+        const structure = 20 + v * 50;
 
         const getPt = (val: number, angleDeg: number) => {
             const rad = (angleDeg - 90) * (Math.PI / 180);
@@ -53,7 +53,7 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
             return `${50 + r * Math.cos(rad)},${50 + r * Math.sin(rad)}`;
         };
 
-        return `${getPt(relaxation, 0)} ${getPt(immunity, 72)} ${getPt(digestion, 144)} ${getPt(energy, 216)} ${getPt(respiratory, 288)}`;
+        return `${getPt(relaxation, 0)} ${getPt(refresh, 72)} ${getPt(digestion, 144)} ${getPt(energy, 216)} ${getPt(structure, 288)}`;
     });
 
     // 4. Left Box - Bottom Bar Chart Mapping (Flavor)

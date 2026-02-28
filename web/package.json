@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:signals": "npx --no-install tsx src/engine/signalConsistencyCheck.ts",
+    "check:result-copy": "npx --no-install tsx src/engine/resultPageCopySafetyCheck.ts && npx --no-install tsx src/engine/projectCopySafetyAudit.ts",
+    "check:diversity": "npx --no-install tsx src/engine/recommendationDiversityAudit.ts",
+    "check:all": "npm run check:signals && npm run check:result-copy && npm run check:diversity && npm run lint && npm run build"
   },
   "dependencies": {
     "framer-motion": "^12.34.3",

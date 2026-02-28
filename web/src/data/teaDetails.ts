@@ -40,10 +40,10 @@ export const teaDetails: TeaDetail[] = [
             { subject: '무드 전환(Mood Shift)', A: 45, fullMark: 100 },
         ],
         features: [
-            { src: '/images/british-black/respiratory_b.svg', label: 'Classic\nDepth' },
+            { src: '/images/british-black/structure_b.svg', label: 'Classic\nDepth' },
             { src: '/images/british-black/dust_b.svg', label: 'Structured\nBody' },
-            { src: '/images/british-black/immune_b.svg', label: 'Warm\nFinish' },
-            { src: '/images/british-black/antiviral_b.svg', label: 'Focus\nRitual' },
+            { src: '/images/british-black/finish_b.svg', label: 'Warm\nFinish' },
+            { src: '/images/british-black/ritual_b.svg', label: 'Focus\nRitual' },
         ]
     },
     {
@@ -63,10 +63,10 @@ export const teaDetails: TeaDetail[] = [
             { subject: '무드 전환(Mood Shift)', A: 72, fullMark: 100 },
         ],
         features: [
-            { src: '/images/asian-gold/recovery_a.svg', label: 'Soft Exotic\nNotes' },
-            { src: '/images/asian-gold/imflammation_a.svg', label: 'Balanced\nLayers' },
-            { src: '/images/asian-gold/neutral_a.svg', label: 'Herbal Citrus\nFinish' },
-            { src: '/images/asian-gold/skin_a.svg', label: 'Daily\nVersatility' },
+            { src: '/images/asian-gold/notes_a.svg', label: 'Soft Exotic\nNotes' },
+            { src: '/images/asian-gold/layers_a.svg', label: 'Balanced\nLayers' },
+            { src: '/images/asian-gold/citrus_a.svg', label: 'Herbal Citrus\nFinish' },
+            { src: '/images/asian-gold/versatile_a.svg', label: 'Daily\nVersatility' },
         ]
     },
     {
@@ -86,10 +86,10 @@ export const teaDetails: TeaDetail[] = [
             { subject: '무드 전환(Mood Shift)', A: 88, fullMark: 100 },
         ],
         features: [
-            { src: '/images/hibiscus-fruit/liver_h.svg', label: 'Bright Fruit\nNotes' },
-            { src: '/images/hibiscus-fruit/stomach_h.svg', label: 'Crisp\nAcidity' },
-            { src: '/images/hibiscus-fruit/carbohydrate_h.svg', label: 'Iced\nFriendly' },
-            { src: '/images/hibiscus-fruit/swelling_h.svg', label: 'Light Reset\nMood' },
+            { src: '/images/hibiscus-fruit/bright_h.svg', label: 'Bright Fruit\nNotes' },
+            { src: '/images/hibiscus-fruit/crisp_h.svg', label: 'Crisp\nAcidity' },
+            { src: '/images/hibiscus-fruit/iced_h.svg', label: 'Iced\nFriendly' },
+            { src: '/images/hibiscus-fruit/reset_h.svg', label: 'Light Reset\nMood' },
         ]
     },
     {
@@ -109,10 +109,10 @@ export const teaDetails: TeaDetail[] = [
             { subject: '무드 전환(Mood Shift)', A: 84, fullMark: 100 },
         ],
         features: [
-            { src: '/images/minty-chocolat/relaxation_m.svg', label: 'Cool Mint\nLift' },
-            { src: '/images/minty-chocolat/body_m.svg', label: 'Cacao\nAftertaste' },
-            { src: '/images/minty-chocolat/headache_m.svg', label: 'After-meal\nMatch' },
-            { src: '/images/minty-chocolat/digestive_m.svg', label: 'Fresh\nContrast' },
+            { src: '/images/minty-chocolat/mint_m.svg', label: 'Cool Mint\nLift' },
+            { src: '/images/minty-chocolat/cacao_m.svg', label: 'Cacao\nAftertaste' },
+            { src: '/images/minty-chocolat/aftermeal_m.svg', label: 'After-meal\nMatch' },
+            { src: '/images/minty-chocolat/contrast_m.svg', label: 'Fresh\nContrast' },
         ]
     }
 ];

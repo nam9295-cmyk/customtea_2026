@@ -12,9 +12,9 @@ const TEA_PRODUCTS = {
         baseColor: '#8B0000',
         available: true,
         ingredients: {
-            cacao: { name: '카카오', emoji: '🫘', stats: { respiratory: 2, immunity: 6, digestion: 4, energy: 5, relaxation: 9 }, flavor: { sweet: 3, bitter: 5, nutty: 10, body: 9, aroma: 6 }, color: '#8B4513' },
-            doraji: { name: '도라지', emoji: '🌾', stats: { respiratory: 10, immunity: 8, digestion: 5, energy: 3, relaxation: 4 }, flavor: { sweet: 2, bitter: 8, nutty: 5, body: 4, aroma: 3 }, color: '#E8D4A8' },
-            tea: { name: '홍차', emoji: '🍂', stats: { respiratory: 3, immunity: 5, digestion: 7, energy: 9, relaxation: 5 }, flavor: { sweet: 1, bitter: 6, nutty: 4, body: 6, aroma: 8 }, color: '#B8423F' }
+            cacao: { name: '카카오', emoji: '🫘', stats: { structure: 2, refresh: 6, balance: 4, mood: 5, finish: 9 }, flavor: { sweet: 3, bitter: 5, nutty: 10, body: 9, aroma: 6 }, color: '#8B4513' },
+            doraji: { name: '도라지', emoji: '🌾', stats: { structure: 10, refresh: 8, balance: 5, mood: 3, finish: 4 }, flavor: { sweet: 2, bitter: 8, nutty: 5, body: 4, aroma: 3 }, color: '#E8D4A8' },
+            tea: { name: '홍차', emoji: '🍂', stats: { structure: 3, refresh: 5, balance: 7, mood: 9, finish: 5 }, flavor: { sweet: 1, bitter: 6, nutty: 4, body: 6, aroma: 8 }, color: '#B8423F' }
         }
     },
     asian: {
@@ -24,9 +24,9 @@ const TEA_PRODUCTS = {
         baseColor: '#D4AF37',
         available: true,
         ingredients: {
-            cacao: { name: '카카오', emoji: '🫘', stats: { respiratory: 2, immunity: 6, digestion: 4, energy: 5, relaxation: 9 }, flavor: { sweet: 1, bitter: 5, nutty: 10, body: 9, aroma: 6 }, color: '#5D4037' },
-            oolong: { name: '우롱차', emoji: '🍃', stats: { respiratory: 4, immunity: 5, digestion: 10, energy: 6, relaxation: 7 }, flavor: { sweet: 2, bitter: 4, nutty: 6, body: 5, aroma: 9 }, color: '#CC9900' },
-            yuja: { name: '유자', emoji: '🍋', stats: { respiratory: 8, immunity: 10, digestion: 7, energy: 8, relaxation: 6 }, flavor: { sweet: 1, bitter: 3, nutty: 0, body: 2, aroma: 10 }, color: '#FFD700' }
+            cacao: { name: '카카오', emoji: '🫘', stats: { structure: 2, refresh: 6, balance: 4, mood: 5, finish: 9 }, flavor: { sweet: 1, bitter: 5, nutty: 10, body: 9, aroma: 6 }, color: '#5D4037' },
+            oolong: { name: '우롱차', emoji: '🍃', stats: { structure: 4, refresh: 5, balance: 10, mood: 6, finish: 7 }, flavor: { sweet: 2, bitter: 4, nutty: 6, body: 5, aroma: 9 }, color: '#CC9900' },
+            yuja: { name: '유자', emoji: '🍋', stats: { structure: 8, refresh: 10, balance: 7, mood: 8, finish: 6 }, flavor: { sweet: 1, bitter: 3, nutty: 0, body: 2, aroma: 10 }, color: '#FFD700' }
         }
     },
     hibiscus: {
@@ -36,9 +36,9 @@ const TEA_PRODUCTS = {
         baseColor: '#E0115F',
         available: true,
         ingredients: {
-            cacao: { name: '카카오', emoji: '🫘', stats: { respiratory: 2, immunity: 6, digestion: 4, energy: 5, relaxation: 9 }, flavor: { sweet: 2, bitter: 5, nutty: 10, body: 9, aroma: 6 }, color: '#5D4037' },
-            hibiscus: { name: '히비스커스 꽃잎', emoji: '🌺', stats: { respiratory: 3, immunity: 7, digestion: 10, energy: 6, relaxation: 5 }, flavor: { sweet: 1, bitter: 1, nutty: 0, body: 2, aroma: 9 }, color: '#FF1493' },
-            omija: { name: '문경 오미자', emoji: '🫐', stats: { respiratory: 8, immunity: 9, digestion: 9, energy: 7, relaxation: 4 }, flavor: { sweet: 5, bitter: 4, nutty: 0, body: 4, aroma: 7 }, color: '#DC143C' }
+            cacao: { name: '카카오', emoji: '🫘', stats: { structure: 2, refresh: 6, balance: 4, mood: 5, finish: 9 }, flavor: { sweet: 2, bitter: 5, nutty: 10, body: 9, aroma: 6 }, color: '#5D4037' },
+            hibiscus: { name: '히비스커스 꽃잎', emoji: '🌺', stats: { structure: 3, refresh: 7, balance: 10, mood: 6, finish: 5 }, flavor: { sweet: 1, bitter: 1, nutty: 0, body: 2, aroma: 9 }, color: '#FF1493' },
+            omija: { name: '문경 오미자', emoji: '🫐', stats: { structure: 8, refresh: 9, balance: 9, mood: 7, finish: 4 }, flavor: { sweet: 5, bitter: 4, nutty: 0, body: 4, aroma: 7 }, color: '#DC143C' }
         }
     },
     minty: {
@@ -48,14 +48,14 @@ const TEA_PRODUCTS = {
         baseColor: '#558B2F',
         available: true,
         ingredients: {
-            cacao: { name: '카카오', emoji: '🫘', stats: { respiratory: 2, immunity: 6, digestion: 4, energy: 5, relaxation: 9 }, flavor: { sweet: 2, bitter: 5, nutty: 10, body: 9, aroma: 6 }, color: '#5D4037' },
-            matcha: { name: '제주 녹차', emoji: '🍵', stats: { respiratory: 5, immunity: 8, digestion: 9, energy: 5, relaxation: 8 }, flavor: { sweet: 3, bitter: 6, nutty: 5, body: 5, aroma: 7 }, color: '#228B22' },
-            mint: { name: '페퍼민트', emoji: '🌿', stats: { respiratory: 9, immunity: 4, digestion: 10, energy: 7, relaxation: 9 }, flavor: { sweet: 1, bitter: 2, nutty: 0, body: 1, aroma: 10 }, color: '#00FF7F' }
+            cacao: { name: '카카오', emoji: '🫘', stats: { structure: 2, refresh: 6, balance: 4, mood: 5, finish: 9 }, flavor: { sweet: 2, bitter: 5, nutty: 10, body: 9, aroma: 6 }, color: '#5D4037' },
+            matcha: { name: '제주 녹차', emoji: '🍵', stats: { structure: 5, refresh: 8, balance: 9, mood: 5, finish: 8 }, flavor: { sweet: 3, bitter: 6, nutty: 5, body: 5, aroma: 7 }, color: '#228B22' },
+            mint: { name: '페퍼민트', emoji: '🌿', stats: { structure: 9, refresh: 4, balance: 10, mood: 7, finish: 9 }, flavor: { sweet: 1, bitter: 2, nutty: 0, body: 1, aroma: 10 }, color: '#00FF7F' }
         }
     }
 }
 
-const STAT_LABELS = { respiratory: '구조감', immunity: '리프레시', digestion: '풍미 밸런스', energy: '무드 전환', relaxation: '여운' }
+const STAT_LABELS = { structure: '구조감', refresh: '리프레시', balance: '풍미 밸런스', mood: '무드 전환', finish: '여운' }
 const FLAVOR_LABELS = { sweet: '단맛', bitter: '쓴맛', nutty: '고소함', body: '바디감', aroma: '향' }
 const FLAVOR_COLORS = ['#F472B6', '#FB923C', '#A78BFA', '#38BDF8', '#4ADE80']
 const TEA_DATA_ARRAY = Object.values(TEA_PRODUCTS);
@@ -178,7 +178,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
         return `rgba(${Math.min(r, 255)}, ${Math.min(g, 255)}, ${Math.min(b, 255)}, ${opacity})`;
     }, [currentTea, ingredientKeys, values]);
 
-    const healthData = useMemo(() => {
+    const profileData = useMemo(() => {
         const total = values.slot1 + values.slot2 + values.slot3;
         const ing = currentTea.ingredients;
         const keys = ingredientKeys;
@@ -304,7 +304,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
                                         <h3 className="text-brand-text text-xs font-serif font-medium tracking-widest uppercase mb-3">Profile Balance</h3>
                                         <div className="w-[140px] h-[140px] md:w-[170px] md:h-[170px]">
                                             <ResponsiveContainer width="100%" height="100%">
-                                                <RadarChart cx="50%" cy="50%" outerRadius="65%" data={healthData}>
+                                                <RadarChart cx="50%" cy="50%" outerRadius="65%" data={profileData}>
                                                     <PolarGrid stroke="#d1d5db" strokeOpacity={0.6} gridType="polygon" />
                                                     <PolarAngleAxis dataKey="stat" tick={{ fill: '#374151', fontSize: 10, fontWeight: 500 }} />
                                                     <PolarRadiusAxis angle={90} domain={[0, 10]} tick={false} axisLine={false} />
