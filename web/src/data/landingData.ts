@@ -6,7 +6,7 @@ export const processSteps = [
     {
         num: '01.',
         title: '취향 데이터 입력',
-        desc: '선호하는 향과 맛, 평소의 수면 패턴과 카페인 민감도를 체크합니다.',
+        desc: '선호하는 향과 맛, 시간대와 카페인 성향을 가볍게 체크합니다.',
     },
     {
         num: '02.',
@@ -39,7 +39,7 @@ export const teaBases = [
     {
         label: 'RED',
         title: 'Hibiscus Fruit',
-        desc: '비타민을 머금은 싱그러운 산미',
+        desc: '밝고 산뜻하게 이어지는 프루티 산미',
         color: '#D97762',
         bg: '#FFF5ED',
     },
@@ -56,7 +56,7 @@ export const teaBases = [
 export const heroReport = {
     id: 'NO. 2024-001',
     title: 'Evening\nTranquility',
-    tags: ['#Rest', '#Detox', '#Caffeine-Free'],
+    tags: ['#Evening', '#Reset', '#Low-Caffeine'],
     ratios: [
         { name: 'Hibiscus Base', val: '65', displayVal: '65%', color: 'bg-accent', delay: '0s' },
         { name: 'Minty Chocolate', val: '35', displayVal: '35%', color: 'bg-text-primary', delay: '0.2s' },
@@ -65,10 +65,10 @@ export const heroReport = {
 
 export const sampleResult = {
     blendNo: 'CUSTOM BLEND NO. 01',
-    title: '오후의 활력을 깨우는\n시트러스 블렌드',
+    title: '오후 무드를 환기하는\n시트러스 블렌드',
     ratios: [
-        { name: 'British Black (Energy)', val: '55%' },
-        { name: 'Hibiscus Fruit (Vitamin)', val: '45%' },
+        { name: 'British Black (Classic)', val: '55%' },
+        { name: 'Hibiscus Fruit (Refresh)', val: '45%' },
     ],
 };
 
@@ -80,7 +80,7 @@ export const questions = [
         options: [
             { id: 'relax', title: '깊은 휴식과 수면', description: '스트레스를 풀고 편안하게 잠들고 싶어요.' },
             { id: 'energy', title: '에너지와 활력', description: '나른한 오후, 기분 좋은 활력이 필요해요.' },
-            { id: 'detox', title: '가벼운 디톡스', description: '기름진 식사 후, 몸을 가볍게 비워내고 싶어요.' },
+            { id: 'refresh', title: '가벼운 리프레시', description: '식사 후나 오후에 분위기를 산뜻하게 전환하고 싶어요.' },
             { id: 'focus', title: '몰입과 집중', description: '중요한 일을 앞두고 맑은 정신이 필요해요.' }
         ]
     },

@@ -50,7 +50,7 @@ const optionWeightLookup: OptionWeightLookup = questions.reduce<OptionWeightLook
     return acc;
 }, {});
 
-const teaSignalAffinity: Record<TeaId, Partial<Record<PreferenceSignalKey, number>>> = {
+export const teaSignalAffinity: Record<TeaId, Partial<Record<PreferenceSignalKey, number>>> = {
     britishBlack: {
         classic: 1.5,
         blackTeaForward: 1.4,
@@ -58,6 +58,7 @@ const teaSignalAffinity: Record<TeaId, Partial<Record<PreferenceSignalKey, numbe
         balanced: 1.0,
         dessertLike: 0.9,
         refreshing: 0.4,
+        adventurous: 0.6,
     },
     asianGold: {
         balanced: 1.4,
@@ -66,6 +67,7 @@ const teaSignalAffinity: Record<TeaId, Partial<Record<PreferenceSignalKey, numbe
         afterMeal: 0.8,
         fruity: 0.7,
         refreshing: 0.8,
+        adventurous: 0.9,
     },
     hibiscusFruit: {
         refreshing: 1.5,
@@ -74,6 +76,7 @@ const teaSignalAffinity: Record<TeaId, Partial<Record<PreferenceSignalKey, numbe
         afterMeal: 0.9,
         balanced: 0.8,
         classic: 0.3,
+        adventurous: 1.1,
     },
     mintyChocolat: {
         minty: 1.6,
@@ -82,6 +85,7 @@ const teaSignalAffinity: Record<TeaId, Partial<Record<PreferenceSignalKey, numbe
         refreshing: 1.0,
         blackTeaForward: 0.8,
         balanced: 0.7,
+        adventurous: 1.0,
     },
 };
 

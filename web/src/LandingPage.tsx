@@ -158,12 +158,12 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
           <div className="flex flex-col md:flex-row w-full justify-between items-center z-0 gap-8 md:gap-0">
             <div className="w-full md:w-1/2 flex justify-center md:justify-end md:pr-24 lg:pr-32">
               <span className="text-2xl md:text-3xl font-medium tracking-tight text-gray-900 text-center md:text-right">
-                디톡스 티뿐만 아니라,
+                취향 기반 티 큐레이션부터,
               </span>
             </div>
             <div className="w-full md:w-1/2 flex justify-center md:justify-start md:pl-24 lg:pl-32">
               <span className="text-2xl md:text-3xl font-medium tracking-tight text-gray-900 text-center md:text-left">
-                베리굿의 더 많은 제품을 만나보세요.
+                베리굿의 다양한 티 무드를 만나보세요.
               </span>
             </div>
           </div>
@@ -187,7 +187,7 @@ export function LandingPage({ onStartSurvey, showLogo = true }: LandingPageProps
             <div className="flex flex-col gap-6 lg:pr-8">
               <span className="font-serif font-bold text-2xl tracking-wider text-brand-text">very goût</span>
               <p className="text-[13px] md:text-sm text-brand-text/50 font-light leading-relaxed">
-                자연이 주는 온전한 휴식.<br className="hidden md:block" /> 당신의 일상에 건강한 비움을 선사합니다.
+                섬세한 취향을 위한 블렌딩.<br className="hidden md:block" /> 당신의 하루에 어울리는 티 무드를 제안합니다.
               </p>
             </div>
 

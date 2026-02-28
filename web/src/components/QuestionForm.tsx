@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { questions } from '../data/questions';
+import { ProfileSignalKey, questions } from '../data/questions';
 
 export type AnswerValue = string | string[];
 
@@ -10,11 +10,11 @@ interface QuestionFormProps {
 
 type MiniAxisKey = 'refreshing' | 'classic' | 'dessertLike' | 'balanced';
 
-const optionSignalHint: Record<string, string> = {
+const optionSignalHint: Record<ProfileSignalKey, string> = {
     refreshing: '상쾌함 선호가 반영됩니다.',
     classic: '클래식 성향이 반영됩니다.',
     balanced: '균형감 선호가 반영됩니다.',
-    desserty: '디저트형 풍미 선호가 반영됩니다.',
+    dessertLike: '디저트형 풍미 선호가 반영됩니다.',
     adventurous: '새로운 스타일 탐색 성향이 반영됩니다.',
     bold: '강한 개성 선호가 반영됩니다.',
     ritual: '차분한 루틴 성향이 반영됩니다.',
@@ -45,7 +45,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ onClose, onComplete }) => {
         const option = currentQuestion.options.find((item) => item.value === optionValue);
         if (!option) return '현재 질문의 취향 분석에 반영됩니다.';
 
-        const strongestSignal = Object.entries(option.profileSignals)
+        const strongestSignal = (Object.entries(option.profileSignals) as Array<[ProfileSignalKey, number | undefined]>)
             .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0) || a[0].localeCompare(b[0]))[0]?.[0];
 
         return strongestSignal
@@ -76,7 +76,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ onClose, onComplete }) => {
                 raw.refreshing += option.profileSignals.refreshing || 0;
                 raw.classic += option.profileSignals.classic || 0;
                 raw.balanced += option.profileSignals.balanced || 0;
-                raw.dessertLike += option.profileSignals.desserty || 0;
+                raw.dessertLike += option.profileSignals.dessertLike || 0;
             });
         });
 

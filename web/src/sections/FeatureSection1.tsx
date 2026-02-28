@@ -26,13 +26,13 @@ export function FeatureSection1({ onStartSurvey }: FeatureSection1Props) {
                     {/* Typography & CTA (Bottom on Mobile, Left on Desktop) */}
                     <div className="flex flex-col justify-center p-8 md:p-16 lg:p-24">
                         <span className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3 md:mb-4">
-                            PERSONALIZED DETOX
+                            PERSONALIZED TEA PROFILE
                         </span>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4 md:mb-6 tracking-tight">
-                            요즘 당신의 몸이 보내는 신호는 무엇인가요?
+                            요즘 당신의 취향이 머무는 무드는 무엇인가요?
                         </h2>
                         <p className="text-gray-600 mb-8 md:mb-10 text-base md:text-lg leading-relaxed">
-                            몇 가지 간단한 질문을 통해, 4가지 디톡스 워터 중 지금 당신에게 가장 완벽한 밸런스를 찾아드립니다.
+                            몇 가지 간단한 질문으로, 4가지 티 베이스 중 지금의 무드와 가장 자연스럽게 맞는 밸런스를 제안합니다.
                         </p>
                         <div>
                             <button

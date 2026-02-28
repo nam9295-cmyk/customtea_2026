@@ -98,9 +98,8 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                             {/* MIDDLE: Data Visualizations (Radar & Bar Charts) */}
                             <div className="grid grid-cols-2 gap-4 sm:gap-6 w-full max-w-lg shrink-0">
 
-                                {/* Radar Chart (Health Balance) */}
                                 <div className="flex flex-col items-center bg-gray-50/50 p-2 sm:p-4 md:p-5 rounded-2xl border border-gray-100 h-[120px] sm:h-[160px] md:h-[180px]">
-                                    <h3 className="text-brand-text text-[8px] sm:text-[10px] font-serif font-bold tracking-widest uppercase mb-auto opacity-50">Health</h3>
+                                    <h3 className="text-brand-text text-[8px] sm:text-[10px] font-serif font-bold tracking-widest uppercase mb-auto opacity-50">Profile</h3>
                                     <div className="w-[85px] h-[85px] sm:w-[110px] sm:h-[110px] relative shrink-0">
                                         <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
                                             {/* Grid Guidelines */}
@@ -111,11 +110,11 @@ export function FeatureSection2({ onStartBlending }: FeatureSection2Props) {
                                             <motion.polygon points={radarPoints} fill="#edc5c4" fillOpacity="0.5" stroke="#edc5c4" strokeWidth="1.2" className="will-change-transform" />
 
                                             {/* Axis Labels */}
-                                            <text x="50" y="-4" fontSize="6.5" fontWeight="600" textAnchor="middle" fill="#6b7280">릴렉스</text>
-                                            <text x="102" y="39" fontSize="6.5" fontWeight="600" textAnchor="start" fill="#6b7280">면역</text>
-                                            <text x="83" y="103" fontSize="6.5" fontWeight="600" textAnchor="middle" fill="#6b7280">소화</text>
-                                            <text x="17" y="103" fontSize="6.5" fontWeight="600" textAnchor="middle" fill="#6b7280">에너지</text>
-                                            <text x="-2" y="39" fontSize="6.5" fontWeight="600" textAnchor="end" fill="#6b7280">호흡기</text>
+                                            <text x="50" y="-4" fontSize="6.5" fontWeight="600" textAnchor="middle" fill="#6b7280">여운</text>
+                                            <text x="102" y="39" fontSize="6.5" fontWeight="600" textAnchor="start" fill="#6b7280">리프레시</text>
+                                            <text x="83" y="103" fontSize="6.5" fontWeight="600" textAnchor="middle" fill="#6b7280">풍미</text>
+                                            <text x="17" y="103" fontSize="6.5" fontWeight="600" textAnchor="middle" fill="#6b7280">무드</text>
+                                            <text x="-2" y="39" fontSize="6.5" fontWeight="600" textAnchor="end" fill="#6b7280">구조감</text>
                                         </svg>
                                     </div>
                                 </div>

@@ -1,4 +1,4 @@
-import { questions, QuestionOption, TeaId } from '../data/questions';
+import { ProfileSignalKey, questions, QuestionOption, TeaId } from '../data/questions';
 
 export type PreferenceSignalKey =
     | 'refreshing'
@@ -60,7 +60,7 @@ export interface PreferenceProfileAnalysis {
     explanationSignals: ExplanationSignal[];
 }
 
-const signalKeys: PreferenceSignalKey[] = [
+export const preferenceSignalKeys: PreferenceSignalKey[] = [
     'refreshing',
     'classic',
     'adventurous',
@@ -103,6 +103,17 @@ const signalDescriptions: Record<PreferenceSignalKey, string> = {
     icedFriendly: '차갑게 즐겼을 때의 선명함을 선호하는 성향입니다.',
     afterMeal: '식후 전환용으로 어울리는 티를 찾는 경향이 강합니다.',
     calmFocus: '차분하게 집중할 수 있는 무드를 중요하게 보는 편입니다.',
+};
+
+export const baseToPreferenceSignalKey: Partial<Record<ProfileSignalKey, PreferenceSignalKey>> = {
+    classic: 'classic',
+    adventurous: 'adventurous',
+    balanced: 'balanced',
+    bold: 'adventurous',
+    refreshing: 'refreshing',
+    dessertLike: 'dessertLike',
+    ritual: 'calmFocus',
+    casual: 'afterMeal',
 };
 
 const archetypeDefinitions: ArchetypeDefinition[] = [
@@ -280,7 +291,7 @@ const pickArchetype = (profileScores: Record<PreferenceSignalKey, number>): Arch
 };
 
 export const analyzePreferenceProfile = (answers: Record<string, string | string[]>): PreferenceProfileAnalysis => {
-    const rawScores = signalKeys.reduce<Record<PreferenceSignalKey, number>>((acc, key) => {
+    const rawScores = preferenceSignalKeys.reduce<Record<PreferenceSignalKey, number>>((acc, key) => {
         acc[key] = 0;
         return acc;
     }, {} as Record<PreferenceSignalKey, number>);
@@ -297,12 +308,10 @@ export const analyzePreferenceProfile = (answers: Record<string, string | string
             if (!option) return;
             selectedOptionCount += 1;
 
-            Object.entries(option.profileSignals).forEach(([signalKey, score]) => {
+            (Object.entries(option.profileSignals) as Array<[ProfileSignalKey, number | undefined]>).forEach(([signalKey, score]) => {
                 if (score === undefined) return;
-                const mapped =
-                    signalKey === 'desserty'
-                        ? 'dessertLike'
-                        : (signalKey as Exclude<PreferenceSignalKey, 'dessertLike'>);
+                const mapped = baseToPreferenceSignalKey[signalKey];
+                if (!mapped) return;
                 rawScores[mapped] += score;
             });
 
@@ -315,14 +324,14 @@ export const analyzePreferenceProfile = (answers: Record<string, string | string
     });
 
     const normalizationBase = Math.max(1, selectedOptionCount * 2.4);
-    const profileScores = signalKeys.reduce<Record<PreferenceSignalKey, number>>((acc, key) => {
+    const profileScores = preferenceSignalKeys.reduce<Record<PreferenceSignalKey, number>>((acc, key) => {
         const ratio = rawScores[key] / normalizationBase;
         const normalized = Math.max(0, Math.min(100, Math.round((ratio + 0.2) * 100)));
         acc[key] = normalized;
         return acc;
     }, {} as Record<PreferenceSignalKey, number>);
 
-    const explanationSignals = [...signalKeys]
+    const explanationSignals = [...preferenceSignalKeys]
         .sort((a, b) => profileScores[b] - profileScores[a] || a.localeCompare(b))
         .slice(0, 4)
         .map((key) => ({

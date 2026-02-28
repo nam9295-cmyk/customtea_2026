@@ -126,7 +126,7 @@ const ResultPage: React.FC<ResultPageProps> = ({ onRestart, recommendationResult
                         오늘의 취향에 맞춘 티 큐레이션입니다.
                     </h1>
                     <p className="font-sans text-[14px] md:text-[16px] text-brand-text/65 leading-relaxed">
-                        건강 효능을 단정하지 않고, 설문에서 고른 취향 축을 바탕으로 풍미와 상황 중심으로 추천해 드립니다.
+                        단정적 기능 표현 없이, 설문에서 고른 취향 축을 바탕으로 풍미와 상황 중심으로 추천해 드립니다.
                     </p>
                 </header>
 

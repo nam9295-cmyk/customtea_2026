@@ -206,7 +206,7 @@ const syntheticCases: SyntheticCase[] = [
         },
     },
     {
-        id: 'late_night_balanced_relief',
+        id: 'late_night_balanced_reset',
         answers: {
             mood: 'soft_balance',
             aroma: ['light_floral', 'herbal_citrus'],

@@ -32,7 +32,7 @@ const TEA_PRODUCTS = {
     hibiscus: {
         id: 'hibiscus',
         name: '히비스커스 프룻',
-        desc: '오미자와 히비스커스의 완벽한 클렌즈',
+        desc: '밝은 과일 결과 산뜻한 마무리의 리프레시 무드',
         baseColor: '#E0115F',
         available: true,
         ingredients: {
@@ -44,7 +44,7 @@ const TEA_PRODUCTS = {
     minty: {
         id: 'minty',
         name: '민티 쇼콜라',
-        desc: '제주 녹차와 민트의 상쾌한 휴식',
+        desc: '민트와 카카오가 대비를 이루는 선명한 애프터무드',
         baseColor: '#558B2F',
         available: true,
         ingredients: {
@@ -55,7 +55,7 @@ const TEA_PRODUCTS = {
     }
 }
 
-const STAT_LABELS = { respiratory: '호흡기', immunity: '면역력', digestion: '소화', energy: '에너지', relaxation: '릴렉스' }
+const STAT_LABELS = { respiratory: '구조감', immunity: '리프레시', digestion: '풍미 밸런스', energy: '무드 전환', relaxation: '여운' }
 const FLAVOR_LABELS = { sweet: '단맛', bitter: '쓴맛', nutty: '고소함', body: '바디감', aroma: '향' }
 const FLAVOR_COLORS = ['#F472B6', '#FB923C', '#A78BFA', '#38BDF8', '#4ADE80']
 const TEA_DATA_ARRAY = Object.values(TEA_PRODUCTS);
@@ -246,7 +246,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
                         {/* Header Typography */}
                         <div className="text-center flex flex-col items-center gap-4">
                             <h2 className="font-serif text-[28px] md:text-[38px] lg:text-[48px] tracking-tight text-brand-text">
-                                Cacao Detox Cleanse Water
+                                Cacao Signature Tea Lab
                             </h2>
                             <p className="font-sans text-brand-text/70 text-sm md:text-base tracking-[0.2em] font-medium uppercase relative">
                                 {currentTea.name}
@@ -301,7 +301,7 @@ export function BrandStorySlider({ onClose }: BrandStorySliderProps) {
                                 <div className="flex flex-row justify-around gap-4 w-full">
                                     {/* Radar Chart */}
                                     <div className="flex flex-col items-center flex-1">
-                                        <h3 className="text-brand-text text-xs font-serif font-medium tracking-widest uppercase mb-3">Health Balance</h3>
+                                        <h3 className="text-brand-text text-xs font-serif font-medium tracking-widest uppercase mb-3">Profile Balance</h3>
                                         <div className="w-[140px] h-[140px] md:w-[170px] md:h-[170px]">
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <RadarChart cx="50%" cy="50%" outerRadius="65%" data={healthData}>

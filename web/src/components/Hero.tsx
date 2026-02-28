@@ -24,10 +24,10 @@ export function Hero() {
                     className="flex flex-col items-center"
                 >
                     <span className="text-sm font-semibold text-gray-500 mb-6 tracking-widest uppercase">
-                        Premium Detox Water
+                        Premium Tea Curation
                     </span>
                     <h1 className="font-sans font-bold text-gray-900 tracking-tighter leading-none text-4xl sm:text-6xl md:text-8xl lg:text-9xl whitespace-nowrap">
-                        Feel Lighter Today.
+                        Find Your Tea Mood.
                     </h1>
                 </motion.div>
             </motion.div>

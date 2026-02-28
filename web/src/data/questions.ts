@@ -17,7 +17,7 @@ export type ProfileSignalKey =
     | 'balanced'
     | 'bold'
     | 'refreshing'
-    | 'desserty'
+    | 'dessertLike'
     | 'ritual'
     | 'casual';
 
@@ -118,7 +118,7 @@ export const questions: Question[] = [
                 label: '카카오의 깊고 부드러운 여운',
                 value: 'cacao_depth',
                 weights: w(4, 2, 1, 5),
-                profileSignals: { desserty: 2, classic: 1, ritual: 1 },
+                profileSignals: { dessertLike: 2, classic: 1, ritual: 1 },
             },
             {
                 label: '플로럴한 가벼운 뉘앙스',
@@ -150,7 +150,7 @@ export const questions: Question[] = [
                 label: '식후 전환 타이밍',
                 value: 'after_meal',
                 weights: w(1, 2, 2, 5),
-                profileSignals: { refreshing: 1, desserty: 1, casual: 2 },
+                profileSignals: { refreshing: 1, dessertLike: 1, casual: 2 },
             },
             {
                 label: '이른 저녁, 하루 정리할 때',
@@ -188,7 +188,7 @@ export const questions: Question[] = [
                 label: '식사 후 깔끔한 마무리',
                 value: 'after_meal_clean',
                 weights: w(1, 2, 3, 5),
-                profileSignals: { casual: 2, refreshing: 1, desserty: 1 },
+                profileSignals: { casual: 2, refreshing: 1, dessertLike: 1 },
             },
             {
                 label: '여유 있게 즐기는 티 타임',
@@ -344,7 +344,7 @@ export const questions: Question[] = [
                 label: '디저트 같은 만족감이 있는 타입',
                 value: 'dessert_finish',
                 weights: w(4, 2, 1, 5),
-                profileSignals: { desserty: 2, bold: 1, ritual: 1 },
+                profileSignals: { dessertLike: 2, bold: 1, ritual: 1 },
             },
             {
                 label: '묵직하지만 단정한 클래식 여운',
